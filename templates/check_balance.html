@@ -38,7 +38,6 @@ body {
   .sidenav a {font-size: 18px;}
 }
 </style>
-
 <title>Stellar Wallet</title>
 <h1><center>Stellar Lumens Wallet (Testnet)</center></h1>
 </head>
@@ -53,7 +52,7 @@ body {
 <center>
     <p>Enter a Stellar testnet address to check its balance in XLM.
     <form action="/balance" method="POST">
-    Address: <input type="text" name="address" id="address" required pattern="[A-Z0-9]{56}">
+    Address: <input type="text" name="address" id="address" required pattern="[G]+[A-Z0-9]{56}">
     </form>
     </p>
 </center>

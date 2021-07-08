@@ -42,7 +42,6 @@ body {
   .sidenav a {font-size: 18px;}
 }
 </style>
-
 <title>Stellar Wallet</title>
 
 <h1><center>Stellar Lumens Wallet (Testnet)</center></h1>
@@ -55,32 +54,30 @@ body {
 </div>
 
 <center>
-<p>Enter the Stellar address you'd like to send money to:
+
 
 <form>
-<label for = "address"></label>
-<input type="text" minlength="56" maxlength="56" id="address">
-</form>
+Enter the Stellar address you'd like to send money to: <br>
+<input type="text" name="address" id="address" required pattern="[G]+[A-Z0-9]{56}">
+</form><br>
 
-<p>Memo (optional):
+Memo (may not be required):
 <form>
 <label for="memo"></label>
 <input type="text">
 </form>
-
-<p>Amount (XLM):
+<br>
+Amount (XLM):
 <form>
 <label for="amount"></label>
-<input type="number" min="0" step="0.01">
+<input type="number" min="0" step="0.01" required pattern="[0-9]">
 </form><br>
 Note that XLM is only precise to seven decimal places.
 <br><br>
-<form>
+<form action="/confirmation">
   <label for = "submit"></label>
   <button type="button">Submit</button>
 </form>
-
-
 
 </center>
 

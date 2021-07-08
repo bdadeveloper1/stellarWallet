@@ -38,6 +38,14 @@ def get_bal(address):
 def send_money():
     return render_template("send.html")
 
+def transact():
+    pass
+
+@app.route("/confirmation", methods = ['POST', 'GET'])
+def confirmation():
+    return render_template("confirmation.html"#, address=address, amount=amount
+    )
+
 @app.route("/about")
 def about():
     return render_template("about.html")
