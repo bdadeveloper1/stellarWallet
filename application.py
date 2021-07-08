@@ -7,6 +7,7 @@ app = Flask(__name__)
 server = Server(horizon_url="https://horizon-testnet.stellar.org")
 base_fee = server.fetch_base_fee()
 
+# sample address for checking balance, sending XLM
 # GBQMBYUUN2I6HLQ3OPDQRYI7AK5WWAXC6TDIG4UNWR7HHRPRJCHB6YBG
 
 @app.route('/')

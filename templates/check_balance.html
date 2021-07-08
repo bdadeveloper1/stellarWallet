@@ -1,60 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% extends 'base.html' %}
+{% block title %}Check Wallet Balance{% endblock %}
 
-<style>
-body {
-  font-family: "Lato", sans-serif;
-}
-.sidenav {
-  width: 130px;
-  position: fixed;
-  z-index: 1;
-  top: 20px;
-  left: 10px;
-  background: #eee;
-  overflow-x: hidden;
-  padding: 8px 0;
-}
-.sidenav a {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #2196F3;
-  display: block;
-}
-.sidenav a:hover {
-  color: #064579;
-}
-.main {
-  margin-left: 140px; /* Same width as the sidebar + left position in px */
-  font-size: 28px; /* Increased text to enable scrolling */
-  padding: 0px 10px;
-}
 
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-</style>
-<title>Stellar Wallet</title>
-<h1><center>Stellar Lumens Wallet (Testnet)</center></h1>
-</head>
-
-<body>
-
-<div class="sidenav">
-  <a href="/">Home</a>
-  <a href="/about">About</a>
-</div>
-
+{% block content %}
 <center>
-    <p>Enter a Stellar testnet address to check its balance in XLM.
+  <p>Enter a Stellar testnet address to check its balance in XLM.
     <form action="/balance" method="POST">
-    Address: <input type="text" name="address" id="address" required pattern="[G]+[A-Z0-9]{56}">
+      Address: <input type="text" name="address" id="address" required pattern="[G][A-Z0-9]{55}">
+      <p>Public addresses begin with a <b>G</b> and consist of 56 alphanumeric characters.</p>
     </form>
-    </p>
+  </p>
 </center>
-</body>
-</html>
+{% endblock %}
