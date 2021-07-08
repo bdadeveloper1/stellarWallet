@@ -1,1 +1,1 @@
-# Stellar Web Wallet
+# Stellar Lumens Web Wallet
