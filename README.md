@@ -1,2 +1,2 @@
 # Stellar Lumens Web Wallet
-A basic web wallet built in Flask for interacting with and transacting on the Stellar blockchain. Currently only provides functionality for the Testnet server.
+A basic web wallet for interacting with and transacting on the Stellar blockchain. Currently only provides functionality for the Testnet server. Created with Flask, API done through [stellar-sdk](https://github.com/StellarCN/py-stellar-base).
