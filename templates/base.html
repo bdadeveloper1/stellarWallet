@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <head>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     @font-face {
       font-family: "Tahoma", "Verdana";
       src: local();
+    }
+    p {
+      text-align: center;
+    }
+    h3{
+      text-align: center;
     }
     body {
       font-family: "Verdana", sans-serif;
@@ -15,8 +21,8 @@
       width: 130px;
       position: fixed;
       z-index: 1;
-      top: 20px;
-      left: 10px;
+      top: 15px;
+      left: 13px;
       background: #eee;
       overflow-x: hidden;
       padding: 8px 0;

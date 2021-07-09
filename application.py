@@ -32,12 +32,11 @@ def get_bal(address):
     account_url_mainnet = "https://horizon.stellar.org/accounts/"+str(address)
     try:
         account_info = requests.get(account_url_testnet).json()
-    except requests.exceptions.SSLError as e:
-        return e
+    except:
+        return "error"
 
     balance = account_info['balances'][0]['balance']
     return balance
-    #print("account has {} XLM".format(balance))
     
 @app.route("/send", methods = ['POST', 'GET'])
 def send_money():
