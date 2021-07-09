@@ -1,6 +1,7 @@
-html { font-family: sans-serif; background: #e0e0e0; }
+html { font-family: Verdana; background: #e0e0e0; }
+
 body {
-  font-family: "Helvetica Neue";
+  font-family: Verdana, sans-serif;
   }
 
 .sidenav {
@@ -22,6 +23,10 @@ body {
   font-size: 25px;
   color: #818181;
   display: block;
+}
+
+.p1 {
+  font-family: Verdana, sans-serif;
 }
 
 /* When you mouse over the navigation links, change their color */

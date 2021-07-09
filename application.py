@@ -13,6 +13,10 @@ base_fee = server.fetch_base_fee()
 @app.route('/')
 def home():
     return render_template("main.html")
+
+@app.route('/create')
+def create():
+    return render_template("create.html")
     
 @app.route("/check_balance", methods = ['POST', 'GET'])
 def check_balance():

@@ -1,53 +1,59 @@
 <!DOCTYPE html>
+<html>
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <head>
-
-<style>
-        body {
-          font-family: "Lato", sans-serif;
-        }
-        .sidenav {
-          width: 130px;
-          position: fixed;
-          z-index: 1;
-          top: 20px;
-          left: 10px;
-          background: #eee;
-          overflow-x: hidden;
-          padding: 8px 0;
-        }
-        .sidenav a {
-          padding: 6px 8px 6px 16px;
-          text-decoration: none;
-          font-size: 25px;
-          color: #2196F3;
-          display: block;
-        }
-        .sidenav a:hover {
-          color: #064579;
-        }
-        .main {
-          margin-left: 140px; /* Same width as the sidebar + left position in px */
-          font-size: 28px; /* Increased text to enable scrolling */
-          padding: 0px 10px;
-        }
-        
-        @media screen and (max-height: 450px) {
-          .sidenav {padding-top: 15px;}
-          .sidenav a {font-size: 18px;}
-        }
-</style>
-
-    {% block head %}
-    <title>{% block title %}{% endblock %}</title>
-    <h1><center>Stellar Lumens Wallet (Testnet)</center></h1>
-    {% endblock %}
+  <style>
+    @font-face {
+      font-family: "Tahoma", "Verdana";
+      src: local();
+    }
+    body {
+      font-family: "Verdana", sans-serif;
+    }
+    .sidenav {
+      width: 130px;
+      position: fixed;
+      z-index: 1;
+      top: 20px;
+      left: 10px;
+      background: #eee;
+      overflow-x: hidden;
+      padding: 8px 0;
+    }
+    .sidenav a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #2196F3;
+      display: block;
+    }
+    .sidenav a:hover {
+      color: #064579;
+    }
+    .main {
+      margin-left: 140px; /* Same width as the sidebar + left position in px */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 0px 10px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+  </style>
+  
+  {% block head %}
+  <title>{% block title %}{% endblock %}</title>
+  <h1><center>Stellar Lumens Wallet (Testnet)</center></h1>
+  {% endblock %}
 </head>
+
 <body>
-    <div class="sidenav">
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-    </div>
-    <div id="content">{% block content %}{% endblock %}</div>
+  <div class="sidenav">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+  </div>
+  <div id="content">{% block content %}{% endblock %}</div>
 </body>
+</html>
