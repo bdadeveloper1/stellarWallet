@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Import Existing Wallet{% endblock %}
+
+{% block content %}
+<p>To import an existing Stellar Lumens wallet, please enter your 12 word seed phrase:</p>
+<form action="/imported" method="POST">
+<p><input type="text" name="phrase" required pattern="[A-z]"></p>
+</form>
+{% endblock %}
