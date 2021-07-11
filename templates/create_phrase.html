@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Create New Wallet{% endblock %}
+
+{% block content %}
+<h3>Create New Wallet</h3>
+<p>Here is your secret phrase:</p>
+<p>{{ phrase }}</p>
+<br>
+<p>Your public address for receiving XLM is:</p>
+ <p>{{ public_key }}</p>
+ <p><a href = "/">Home</a></p>
+{% endblock %}

@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, redirect, send_from_directory
-import os
-from stellar_sdk import Server
+from flask import Flask, render_template, request
+from stellar_sdk import Server, Keypair
 import requests
 
 app = Flask(__name__)
@@ -17,6 +16,17 @@ def home():
 @app.route('/create')
 def create():
     return render_template("create.html")
+
+@app.route('/create_phrase')
+def create_phrase():
+    new_keypair = new_wallet()
+    phrase = new_keypair.generate_mnemonic_phrase()
+    return render_template("create_phrase.html", phrase = phrase,
+    public_key = new_keypair.public_key)
+
+def new_wallet():
+    keypair = Keypair.random()
+    return keypair
     
 @app.route("/check_balance", methods = ['POST', 'GET'])
 def check_balance():
@@ -45,9 +55,9 @@ def send_money():
 def transact():
     pass
 
-@app.route("/confirmation", methods = ['POST', 'GET'])
-def confirmation():
-    return render_template("confirmation.html"#, address=address, amount=amount
+@app.route("/send_conf", methods = ['POST', 'GET'])
+def send_conf():
+    return render_template("send_conf.html"#, address=address, amount=amount
     )
 
 @app.route("/about")
@@ -59,4 +69,6 @@ if __name__ == "__main__":
     # Setting debug to True enables debug output. This line should be
     # removed before deploying a production app.
     app.debug = True
-    app.run(ssl_context='adhoc')
+    app.run(
+        #ssl_context='adhoc'
+        )
