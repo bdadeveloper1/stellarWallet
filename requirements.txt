@@ -1,1 +1,2 @@
 stellar_sdk==4.0.0
+flask==1.1.2
