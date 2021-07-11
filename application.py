@@ -14,26 +14,28 @@ def home():
     """homepage"""
     return render_template("main.html")
 
+# to do: save wallet once created
 @application.route('/create')
 def create():
     """page for explaining seed phrase before creating wallet"""
     return render_template("create.html")
 
+# to do: save wallet once created
 @application.route('/create_phrase')
 def create_phrase():
     """page for displaying seed phrase"""
     new_keypair = new_wallet()
     phrase = new_keypair.generate_mnemonic_phrase()
     return render_template("create_phrase.html", phrase = phrase,
-    public_key = new_keypair.public_key)
+    public_key = new_keypair.public_key,
+    secret_key = new_keypair.secret)
 
-# to do: save wallet once created
 def new_wallet():
     """"Function to create a new wallet"""
     keypair = Keypair.random()
     return keypair
 
-# to do: save the user's wallet once it is imported
+# to do: save user's wallet once it is imported
 @application.route("/import_wallet")
 def import_wallet():
     """page for importing a new wallet using 12 word seed phrase"""
@@ -118,4 +120,5 @@ def about():
 
 # run the app
 if __name__ == "__main__":
+    application.debug = True
     application.run()
