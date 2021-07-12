@@ -36,10 +36,14 @@ def new_wallet():
     return keypair
 
 # to do: save user's wallet once it is imported
-@application.route("/import_wallet")
+@application.route("/import_wallet", methods=['POST', 'GET'])
 def import_wallet():
     """page for importing a new wallet using 12 word seed phrase"""
     return render_template("import_wallet.html")
+
+def phrase_to_key():
+    """function to convert seed phrase into private key"""
+    return request.form['word1']
 
 @application.route('/imported')
 def imported():
