@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
+import stellar_sdk
 import requests
 
 application = Flask(__name__)
@@ -43,9 +44,13 @@ def import_wallet():
 
 def phrase_to_key():
     """function to convert seed phrase into private key"""
-    return request.form['word1']
+    try:
+        s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
+        return s_key
+    except stellar_sdk.exceptions.ValueError:
+        return render_template("import_failed.html")
 
-@application.route('/imported')
+@application.route('/imported', methods=['POST', 'GET'])
 def imported():
     """page for status after entering seed phrase"""
     return render_template("imported.html")
@@ -72,7 +77,6 @@ def balance():
     """page displays balance of previously input address"""
     balance = get_bal(request.form['address'])
     return render_template("balance.html", balance=balance)
-
 
 @application.route("/send", methods = ['POST', 'GET'])
 def send():
@@ -105,17 +109,20 @@ def transact():
         transaction_info_url = "https://testnet.steexp.com/tx/"+response['hash']
         return transaction_info_url
     else:
-        pass
+        return False
 
 @application.route("/send_conf", methods = ['POST', 'GET'])
 def send_conf():
     """page to output confirmation with recipient address and amount.
     displays link to view transaction info on stellar explorer"""
-    transact()
-    return render_template("send_conf.html",
-    address = request.form['recipient_address'],
-    amount = request.form['amount'])
-
+    conf_url = transact()
+    if conf_url:
+        return render_template("send_conf.html",
+        address = request.form['recipient_address'],
+        amount = request.form['amount'],
+        conf_url = conf_url)
+    else:
+        return render_template("send_failed.html")
 
 @application.route("/about")
 def about():

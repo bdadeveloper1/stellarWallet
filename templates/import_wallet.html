@@ -4,18 +4,7 @@
 {% block content %}
 <p>To import an existing Stellar Lumens wallet, please enter your 12 word seed phrase:</p>
 <form action="/imported" method="POST">
-<p><input type="text" name="word1" required pattern="[A-z]" required></p>
-<p><input type="text" name="word2" required pattern="[A-z]" required></p>
-<p><input type="text" name="word3" required pattern="[A-z]" required></p>
-<p><input type="text" name="word4" required pattern="[A-z]" required></p>
-<p><input type="text" name="word5" required pattern="[A-z]" required></p>
-<p><input type="text" name="word6" required pattern="[A-z]" required></p>
-<p><input type="text" name="word7" required pattern="[A-z]" required></p>
-<p><input type="text" name="word8" required pattern="[A-z]" required></p>
-<p><input type="text" name="word9" required pattern="[A-z]" required></p>
-<p><input type="text" name="word10" required pattern="[A-z]" required></p>
-<p><input type="text" name="word11" required pattern="[A-z]" required></p>
-<p><input type="text" name="word12" required pattern="[A-z]" required></p>
+<p><input size="80" type="text" name="phrase" pattern="[A-z]" autofocus required></p>
 </form>
-<p><button type="submit" formaction="/imported">Submit</button></p>
+<form method="POST"><p><button type="submit" formaction="/imported">Submit</button></p></form>
 {% endblock %}
