@@ -57,14 +57,14 @@ def imported():
     pl = len(request.form['phrase'].split(" ")) # get phrase length, split into words
     if pl == 12: #check that there are twelve words
         try:
-            s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
+            Keypair.from_mnemonic_phrase(request.form['phrase'])
             #the secret key will be saved somehow at this point
         except stellar_sdk.exceptions.ValueError:
             err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
             return render_template("import_failed.html", err_msg=err_msg)
         return render_template("imported.html")
     else:
-        err_msg = "12 words were not entered."
+        err_msg = "Seed phrases are 12 words; {} words were entered.".format(pl)
         return render_template("import_failed.html", err_msg=err_msg)
 
 @application.route("/check_balance", methods = ['POST', 'GET'])
