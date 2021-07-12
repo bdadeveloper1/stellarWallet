@@ -2,9 +2,12 @@
 {% block title %}Import Existing Wallet{% endblock %}
 
 {% block content %}
-<p>To import an existing Stellar Lumens wallet, please enter your 12 word seed phrase:</p>
+<p>To import an existing Stellar Lumens wallet, please enter your 12 word seed phrase.<br>
+    Enter one word at a time, all lowercase, and with a space between each word.</p>
 <form action="/imported" method="POST">
-<p><input size="80" type="text" name="phrase" pattern="[A-z]" autofocus required></p>
-</form>
-<form method="POST"><p><button type="submit" formaction="/imported">Submit</button></p></form>
+<p><input action="/imported" size="60"
+    type="text" name="phrase" pattern="[a-zA-Z][a-zA-Z ]+{4,}"
+    autofocus required
+    title="Enter your seed phrase one word at a time with spaces."></p>
+<p><button type="submit" formaction="/imported">Submit</button></p></form>
 {% endblock %}

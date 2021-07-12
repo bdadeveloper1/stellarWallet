@@ -3,26 +3,20 @@
 
 {% block content %}
   <p>Enter the Stellar address you'd like to send money to:
-  <form method="POST">
+  <form action="/send_conf" method="POST">
     <p><input type="text" name="address_recipient" id="address_recipient" required pattern="[G][A-Z0-9]{55}"></p>
-   </form>
-  <p>Memo (may not be required):</p>
-  <form method="POST">
+  <p>Memo (may not be required - confirm with recipient):</p>
+
     <label for="memo"></label>
     <p><input type="text"></p>
-  </form>
   <p>Amount (XLM):</p>
-  <form method="POST">
+
     <label for="amount"></label>
     <p><input type="number" min="0" step="0.01" required pattern="[0-9]"></p>
-  </form>
   <p>Note that XLM is only precise to seven decimal places.</p>
   <p>Your private key is required to sign and confirm the transaction on the blockchain.</p>
-  <form method="POST">
     <label for="priv_key"></label>
-    <p>Private key: <input type="text" name="priv_key" id="priv_key" required pattern="[S][A-Z0-9]{55}"></p>
-  </form>
-  <form action="/send_conf">
+    <p>Private key: <input type="text" name="priv_key" id="priv_key" required pattern="[S][A-Z0-9]{55}"></p>>
     <label for = "submit"></label>
     <p><button type="button">Submit</button></p>
   </form>

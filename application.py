@@ -42,18 +42,30 @@ def import_wallet():
     """page for importing a new wallet using 12 word seed phrase"""
     return render_template("import_wallet.html")
 
-def phrase_to_key():
-    """function to convert seed phrase into private key"""
-    try:
-        s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
-        return s_key
-    except stellar_sdk.exceptions.ValueError:
-        return render_template("import_failed.html")
+# def phrase_to_key():
+#     """function to convert seed phrase into private key"""
+#     if len(request.form['phrase'].split(" ")) == 12:
+#         return 
+#     else:
+    
+#     s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
+#     return s_key
 
 @application.route('/imported', methods=['POST', 'GET'])
 def imported():
     """page for status after entering seed phrase"""
-    return render_template("imported.html")
+    pl = len(request.form['phrase'].split(" ")) # get phrase length, split into words
+    if pl == 12: #check that there are twelve words
+        try:
+            s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
+            #the secret key will be saved somehow at this point
+        except stellar_sdk.exceptions.ValueError:
+            err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
+            return render_template("import_failed.html", err_msg=err_msg)
+        return render_template("imported.html")
+    else:
+        err_msg = "12 words were not entered."
+        return render_template("import_failed.html", err_msg=err_msg)
 
 @application.route("/check_balance", methods = ['POST', 'GET'])
 def check_balance():
