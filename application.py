@@ -62,7 +62,7 @@ def imported():
         except stellar_sdk.exceptions.ValueError:
             err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
             return render_template("import_failed.html", err_msg=err_msg)
-        return render_template("imported.html")
+        return render_template("import_success.html")
     else:
         err_msg = "Seed phrases are 12 words; {} words were entered.".format(pl)
         return render_template("import_failed.html", err_msg=err_msg)
