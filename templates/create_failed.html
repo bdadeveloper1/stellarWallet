@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Create New Wallet{% endblock %}
+
+{% block content %}
+<h3>Create New Wallet</h3>
+<p>Your wallet could not be created/funded. The following error was returned by the server:</p>
+<p>{{ bot_response }}</p>
+ <p><a href="/create_wallet">Retry</a></p>
+ <p><a href = "/">Home</a></p>
+{% endblock %}

@@ -1,19 +1,34 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
+#from flask_session import Session
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
 import stellar_sdk
 import requests
 
 application = Flask(__name__)
+application.secret_key = "wasdfghjkl"
 server = Server(horizon_url="https://horizon-testnet.stellar.org")
+friendbot_url = "https://friendbot.stellar.org"
 base_fee = server.fetch_base_fee()
-
 # sample address for checking balance and sending XLM
 # GBQMBYUUN2I6HLQ3OPDQRYI7AK5WWAXC6TDIG4UNWR7HHRPRJCHB6YBG
 
 @application.route('/')
 def home():
     """homepage"""
-    return render_template("main.html")
+ #   try:
+  #      session['priv_key']
+   # except:
+    #    session['priv_key'] = None
+
+    if session.get('priv_key') != None:
+         return render_template("main_logged_in.html",
+         pub_address = session.get("pub_key"))
+    else:
+        return render_template("main.html")
+        
+  #  else:
+   #     return render_template("main_logged_in.html",
+    #    pub_address = session['pub_key'])
 
 # to do: save wallet once created
 @application.route('/create')
@@ -26,8 +41,18 @@ def create():
 def create_phrase():
     """page for displaying seed phrase"""
     new_keypair = new_wallet()
+    response = requests.get(friendbot_url, params={"addr": new_keypair.public_key})
+    if response.status_code == 200:
+        bot_response = "Your wallet has been successfully created and funded with 10,000 XLM by friendbot."
+    else:
+        status = response.status_code
+        bot_response = "Error "+str(status)+" received from the server. Please try again."
+        return render_template("create_failed.html")
     phrase = new_keypair.generate_mnemonic_phrase()
-    return render_template("create_phrase.html", phrase = phrase,
+    session['priv_key'] = new_keypair.secret
+    session['pub_key'] = new_keypair.public_key
+    return render_template("create_success.html",
+    bot_response = bot_response, phrase = phrase,
     public_key = new_keypair.public_key,
     secret_key = new_keypair.secret)
 
@@ -57,11 +82,13 @@ def imported():
     pl = len(request.form['phrase'].split(" ")) # get phrase length, split into words
     if pl == 12: #check that there are twelve words
         try:
-            Keypair.from_mnemonic_phrase(request.form['phrase'])
-            #the secret key will be saved somehow at this point
+            key = Keypair.from_mnemonic_phrase(request.form['phrase'])
         except stellar_sdk.exceptions.ValueError:
             err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
             return render_template("import_failed.html", err_msg=err_msg)
+        # this should save the user's private key for as long as they keep the site open
+        session['priv_key'] = key.secret
+        session['pub_key'] = key.public_key
         return render_template("import_success.html")
     else:
         err_msg = "Seed phrases are 12 words; {} words were entered.".format(pl)
@@ -102,11 +129,11 @@ def transact():
     #ideally the user should not have to enter their private key
     #but there is currently not an implented way to store it (cookies? etc.)
     #at least i don't know the proper way to store a private key
-    priv_key = request.form['priv_key']
+    priv_key = session.get('priv_key')
     memo = request.form['memo']
     transaction = (
     TransactionBuilder(
-        source_account = server.load_account(), #somehow load in the user's PUBLIC key here
+        source_account = server.load_account(session.get('pub_key')),
         network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE,
         base_fee = base_fee,
         )
@@ -128,13 +155,18 @@ def send_conf():
     """page to output confirmation with recipient address and amount.
     displays link to view transaction info on stellar explorer"""
     conf_url = transact()
-    if conf_url:
-        return render_template("send_conf.html",
+    if conf_url != False:
+        return render_template("send_success.html",
         address = request.form['recipient_address'],
         amount = request.form['amount'],
         conf_url = conf_url)
     else:
         return render_template("send_failed.html")
+
+@application.route("/remove")
+def remove():
+    pass
+#    return render_template("remove.html")
 
 @application.route("/about")
 def about():
