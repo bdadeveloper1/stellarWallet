@@ -2,11 +2,34 @@
 {% block title %}Stellar Wallet - Home{% endblock %}
 
 {% block content %}
-<p>Welcome! Your wallet is connected.</p>
-<h5><p>Your public address: {{ pub_address }}</p></h5>
+<h3><p>Welcome! Your wallet is connected.</p></h3>
+
+<p><button onclick="toggleAddress()">Toggle Address and Balance View</button></p>
+
+<div id="public_info">
+<h4><p>Your public address:<br>
+    {{ pub_address }}</p>
+<p>Balance: {{ pub_balance }} XLM</p></h4>
+</div>
+
     <p>Select what you'd like to do:</p>
-    <p><a href="/import_wallet">Replace Existing Wallet</a></p>
-        <p><a href="/create">Create New Wallet</a></p>
-        <p><a href="/check_balance">Check An Address Balance</a></p>
-        <p><a href = "/send">Send Funds</a></p>
+    <p><a href = "/send">Send Funds</a></p>
+    <p><a href="/check_balance">Check An Address Balance</a></p>
+    <p><a href="/create">Create New Wallet</a></p>
+    <!-- this doesn't work yet, unfortunately -->
+    <p><!--<a href="/import_wallet">-->Recover Existing Wallet (Coming Soon)</p>
+    
+    
+    
+<script>
+function toggleAddress() {
+  var x = document.getElementById("public_info");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
 {% endblock %}

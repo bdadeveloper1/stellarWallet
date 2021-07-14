@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, session
+from json import dump
+from flask import Flask, render_template, redirect, request, session
 #from flask_session import Session
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
-import stellar_sdk
+from stellar_sdk.exceptions import NotFoundError
 import requests
 
 application = Flask(__name__)
@@ -15,14 +16,12 @@ base_fee = server.fetch_base_fee()
 @application.route('/')
 def home():
     """homepage"""
- #   try:
-  #      session['priv_key']
-   # except:
-    #    session['priv_key'] = None
-
+    #render logged in page if wallet is active
     if session.get('priv_key') != None:
          return render_template("main_logged_in.html",
-         pub_address = session.get("pub_key"))
+         pub_address = session.get('pub_key'),
+         pub_balance = session.get('user_balance'))
+    #page for non logged in users
     else:
         return render_template("main.html")
         
@@ -30,69 +29,77 @@ def home():
    #     return render_template("main_logged_in.html",
     #    pub_address = session['pub_key'])
 
-# to do: save wallet once created
 @application.route('/create')
 def create():
     """page for explaining seed phrase before creating wallet"""
     return render_template("create.html")
 
-# to do: save wallet once created
-@application.route('/create_phrase')
-def create_phrase():
+@application.route('/create_result')
+def create_result():
     """page for displaying seed phrase"""
     new_keypair = new_wallet()
     response = requests.get(friendbot_url, params={"addr": new_keypair.public_key})
     if response.status_code == 200:
-        bot_response = "Your wallet has been successfully created and funded with 10,000 XLM by friendbot."
+        bot_response = "Your testnet wallet has been successfully created and funded with 10,000 XLM."
     else:
         status = response.status_code
         bot_response = "Error "+str(status)+" received from the server. Please try again."
         return render_template("create_failed.html")
     phrase = new_keypair.generate_mnemonic_phrase()
+    #i assume this is the way to store the keys for the session
     session['priv_key'] = new_keypair.secret
     session['pub_key'] = new_keypair.public_key
+    session['user_balance'] = get_bal(session['pub_key'])
     return render_template("create_success.html",
     bot_response = bot_response, phrase = phrase,
-    public_key = new_keypair.public_key,
-    secret_key = new_keypair.secret)
+    pub_address = session['pub_key'],
+    priv_address = session['priv_key'])
 
 def new_wallet():
-    """"Function to create a new wallet"""
-    keypair = Keypair.random()
-    return keypair
+    """"function to create a new wallet"""
+    return Keypair.random()
 
 # to do: save user's wallet once it is imported
-@application.route("/import_wallet", methods=['POST', 'GET'])
-def import_wallet():
-    """page for importing a new wallet using 12 word seed phrase"""
-    return render_template("import_wallet.html")
+#@application.route("/import_wallet", methods=['POST', 'GET'])
+#def import_wallet():
+#   """page for importing a new wallet using 12 word seed phrase"""
+#  return render_template("import_wallet.html")
 
-# def phrase_to_key():
-#     """function to convert seed phrase into private key"""
-#     if len(request.form['phrase'].split(" ")) == 12:
-#         return 
+# @application.route('/imported', methods=['POST', 'GET'])
+# def imported():
+#     """page for status after entering seed phrase"""
+#     phrase = request.form['phrase']
+#     pl = len(phrase.split(" ")) # get phrase length, split into words
+#     if pl == 12: #check that there are twelve words
+#         try: #verify mnenomic is valid
+#             imported_key = Keypair.from_mnemonic_phrase(phrase)
+#         except ValueError:
+#             err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
+#             return render_template("import_failed.html", err_msg=err_msg)
+#         #fund public address if not funded
+#         #accounts do not "exist" on the blockchain if unfunded
+#         #try to get account info. if fails, fund with friendbot
+#         account_url = "https://horizon-testnet.stellar.org/accounts/"+str(session['pub_key'])
+#         try:
+#             account_info = requests.get(account_url).json()
+#             balance = account_info['balances'][0]['balance']
+#         except:
+#             requests.get(friendbot_url, params={"addr": session['pub_key']})
+#             account_info = requests.get(account_url).json()
+#         try:
+#             balance = account_info['balances'][0]['balance']
+#             session['balance'] = balance
+#         except KeyError:
+#             return render_template("import_failed.html",
+#             err_msg = "Balance could not be retrived.")
+#         session['priv_key'] = imported_key.secret
+#         session['pub_key'] = imported_key.public_key
+#         print("inside imported function\n"+session['pub_key']+"\n"+session['priv_key'])
+#         return render_template("import_success.html",
+#         balance=balance)
 #     else:
-    
-#     s_key = Keypair.from_mnemonic_phrase(request.form['phrase'])
-#     return s_key
-
-@application.route('/imported', methods=['POST', 'GET'])
-def imported():
-    """page for status after entering seed phrase"""
-    pl = len(request.form['phrase'].split(" ")) # get phrase length, split into words
-    if pl == 12: #check that there are twelve words
-        try:
-            key = Keypair.from_mnemonic_phrase(request.form['phrase'])
-        except stellar_sdk.exceptions.ValueError:
-            err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
-            return render_template("import_failed.html", err_msg=err_msg)
-        # this should save the user's private key for as long as they keep the site open
-        session['priv_key'] = key.secret
-        session['pub_key'] = key.public_key
-        return render_template("import_success.html")
-    else:
-        err_msg = "Seed phrases are 12 words; {} words were entered.".format(pl)
-        return render_template("import_failed.html", err_msg=err_msg)
+#         err_msg = "Seed phrases are 12 words; {} words were entered.".format(pl)
+#         return render_template("import_failed.html", err_msg=err_msg)
 
 @application.route("/check_balance", methods = ['POST', 'GET'])
 def check_balance():
@@ -105,17 +112,20 @@ def get_bal(address):
     account_url_mainnet = "https://horizon.stellar.org/accounts/"+str(address)
     try:
         account_info = requests.get(account_url_testnet).json()
+        balance = account_info['balances'][0]['balance']
+        return balance
     except:
-        return "error"
+        return False
 
-    balance = account_info['balances'][0]['balance']
-    return balance
 
 @application.route("/balance", methods = ['POST', 'GET'])
 def balance():
     """page displays balance of previously input address"""
     balance = get_bal(request.form['address'])
-    return render_template("balance.html", balance=balance)
+    if not balance:
+        return render_template("balance_failed.html")
+    else:
+        return render_template("balance.html", balance=balance)
 
 @application.route("/send", methods = ['POST', 'GET'])
 def send():
@@ -125,15 +135,17 @@ def send():
 def transact():
     """function to actually process and confirm transactions"""
     recipient_address = request.form['recipient_address']
+    try:
+        response = requests.get(friendbot_url, params={"addr": session.get('pub_key')})
+        source_account = server.load_account(session.get('pub_key'))
+    except NotFoundError:
+        return False
     amount = request.form['amount']
-    #ideally the user should not have to enter their private key
-    #but there is currently not an implented way to store it (cookies? etc.)
-    #at least i don't know the proper way to store a private key
     priv_key = session.get('priv_key')
     memo = request.form['memo']
     transaction = (
     TransactionBuilder(
-        source_account = server.load_account(session.get('pub_key')),
+        source_account = source_account,
         network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE,
         base_fee = base_fee,
         )
@@ -146,6 +158,7 @@ def transact():
     response = server.submit_transaction(transaction)
     if response['successful']:
         transaction_info_url = "https://testnet.steexp.com/tx/"+response['hash']
+        session['user_balance'] = get_bal(session['pub_key'])
         return transaction_info_url
     else:
         return False
@@ -163,15 +176,32 @@ def send_conf():
     else:
         return render_template("send_failed.html")
 
-@application.route("/remove")
-def remove():
-    pass
-#    return render_template("remove.html")
-
 @application.route("/about")
 def about():
     """page for info about stellar/the wallet"""
     return render_template("about.html")
+
+@application.route("/remove_wallet")
+def remove_wallet():
+    if session['priv_key'] == None:
+        return redirect("#")
+    else:
+        return render_template("remove_wallet.html")
+
+@application.route("/remove_conf")
+def remove_conf():
+    session['priv_key'] = None
+    session['pub_key'] = None
+    session['balance'] = None
+    return render_template("remove_conf.html")
+
+@application.route("/view_secret")
+def view_secret():
+    if session['priv_key'] == None:
+        return redirect("/")
+    else:
+        return render_template("view_secret.html",
+        priv_key = session['priv_key'])
 
 # run the app
 if __name__ == "__main__":

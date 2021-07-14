@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Remove Wallet{% endblock %}
+
+{% block content %}
+<h4><p>You are about to disconnect your wallet from this device/web app.</p></h4>
+<p>Your funds will remain in your wallet, but you will need your secret phrase to access<br>
+them on this device again.</p>
+<p>Ensure that your phrase is backed up before proceeding.</p>
+<form action="/remove_conf">
+    <p><button type = "submit">I understand and wish to proceed</button></p>
+</form>
+<form action="/">
+    <p><button type = "submit">Cancel</button></p>
+</form>
+{% endblock %}

@@ -3,14 +3,14 @@
 
 {% block content %}
 <h3>Create New Wallet</h3>
+<h4><p>Success! {{ bot_response }}</p></h4>
 <p>Here is your seed phrase:</p>
 <p>{{ phrase }}</p>
-<p>And your secret key:</p>
-<p>{{ secret_key }}</p>
-<p>Please note that this is the <b>only</b> time your seed phrase and secret key will be displayed!</p>
+<p>Please note that this is the <b>only</b> time your seed phrase will be displayed!</p>
 <br>
-<p>Your public address for receiving XLM is:</p>
- <p>{{ public_key }}</p>
- <p><a href="/import_wallet">Load This Wallet</a></p>
+<p>Your public address:<br>
+    {{ pub_address }}
+    Your secret key:<br>
+{{ priv_address }}</p>
  <p><a href = "/">Home</a></p>
 {% endblock %}

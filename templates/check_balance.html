@@ -5,7 +5,9 @@
 {% block content %}
   <p>Enter a Stellar testnet address to check its balance in XLM.</p>
     <form action="/balance" method="POST">
-      <p><input type="text" name="address" id="address" required pattern="[G][A-Z0-9]{55}" autofocus/></p>
-      <p>Public addresses begin with a <b>G</b> and consist of 56 alphanumeric characters.</p>
+      <p><input type="text" size="72" name="address" id="address" required pattern="[G][A-Z0-9]{55}" autofocus/></p>
+      <p><button type="submit">Check</button></p>
     </form>
+    <p>Public addresses begin with a <b>G</b> and consist of 56 alphanumeric characters.</p>
+    
 {% endblock %}

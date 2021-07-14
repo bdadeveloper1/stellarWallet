@@ -5,6 +5,8 @@
 <h3>Create New Wallet</h3>
 <p>Please be ready to securely store/write down your 12 word phrase. It will only be shown once.</p>
 <p>You will need this phrase if you ever need to recover your wallet.</p>
-<p>Do not let anybody else know your phrase or private key. They will be able to access all of your funds.</p>
-<p><a href="/create_phrase">Create Wallet</a></p>
+<p>Do not let anybody else know your phrase or private key. They will be able to access your funds.</p>
+<form action="/create_result" method="GET">
+    <p><button type="submit">Create Wallet</button></p>
+</form>
 {% endblock %}

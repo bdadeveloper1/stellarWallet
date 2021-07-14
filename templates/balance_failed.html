@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Check Wallet Balance{% endblock %}
+
+{% block content %}
+  <p>Could not check address balance. Check your input and try again.</p>
+  <p>This account may not be funded by friendbot yet. As such, no record of it exists on the blockchain,<br>
+    so its balance cannot be obtained.
+  </p>
+  <p><a href="/check_balance">Check Another Address</a></p>
+    <p><a href = "/">Home</a></p>
+  {% endblock %}
+  
