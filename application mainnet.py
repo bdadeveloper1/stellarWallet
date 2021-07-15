@@ -6,11 +6,8 @@ import requests
 
 application = Flask(__name__)
 application.secret_key = "wasdfghjkl"
-server = Server(horizon_url="https://horizon-testnet.stellar.org")
-friendbot_url = "https://friendbot.stellar.org"
+server = Server(horizon_url="https://horizon.stellar.org")
 base_fee = server.fetch_base_fee()
-# sample address for checking balance and sending XLM
-# GBQMBYUUN2I6HLQ3OPDQRYI7AK5WWAXC6TDIG4UNWR7HHRPRJCHB6YBG
 
 @application.route('/')
 def home():
@@ -37,22 +34,15 @@ def create():
 def create_result():
     """page for displaying seed phrase"""
     new_keypair = new_wallet()
-    response = requests.get(friendbot_url, params={"addr": new_keypair.public_key})
-    if response.status_code == 200:
-        bot_response = "Your testnet wallet has been successfully created and funded with 10,000 XLM."
-    else:
-        status = response.status_code
-        bot_response = "Error "+str(status)+" received from the server. Please try again."
-        return render_template("create_failed.html")
     phrase = new_keypair.generate_mnemonic_phrase()
     #i assume this is the way to store the keys for the session
     session['priv_key'] = new_keypair.secret
     session['pub_key'] = new_keypair.public_key
     session['user_balance'] = get_bal(session['pub_key'])
     return render_template("create_success.html",
-    bot_response = bot_response, phrase = phrase,
-    pub_address = session['pub_key'],
-    priv_address = session['priv_key'])
+    phrase = phrase,
+    pub_address = session.get('pub_key'),
+    priv_address = session.get('priv_key'))
 
 def new_wallet():
     """"function to create a new wallet"""
@@ -88,7 +78,7 @@ def imported():
         #     requests.get(friendbot_url, params={"addr": session['pub_key']})
         #     account_info = requests.get(account_url).json()
         try:
-            account_url = "https://horizon-testnet.stellar.org/accounts/"+str(session['pub_key'])
+            account_url = "https://horizon.stellar.org/accounts/"+str(session['pub_key'])
             account_info = requests.get(account_url).json()
             balance = account_info['balances'][0]['balance']
             session['balance'] = balance
@@ -111,10 +101,9 @@ def check_balance():
 
 def get_bal(address):
     """function to retrieve wallet ballance from horizon"""
-    account_url_testnet = "https://horizon-testnet.stellar.org/accounts/"+str(address)
-    account_url_mainnet = "https://horizon.stellar.org/accounts/"+str(address)
+    account_url = "https://horizon.stellar.org/accounts/"+str(address)
     try:
-        account_info = requests.get(account_url_testnet).json()
+        account_info = requests.get(account_url).json()
         balance = account_info['balances'][0]['balance']
         return balance
     except:
@@ -139,7 +128,6 @@ def transact():
     """function to actually process and confirm transactions"""
     recipient_address = request.form['recipient_address']
     try:
-        response = requests.get(friendbot_url, params={"addr": session.get('pub_key')})
         source_account = server.load_account(session.get('pub_key'))
     except NotFoundError:
         return False
@@ -149,7 +137,7 @@ def transact():
     transaction = (
     TransactionBuilder(
         source_account = source_account,
-        network_passphrase = Network.TESTNET_NETWORK_PASSPHRASE,
+        network_passphrase = Network.PUBLIC_NETWORK_PASSPHRASE,
         base_fee = base_fee,
         )
     .add_text_memo(memo)
@@ -160,7 +148,7 @@ def transact():
     transaction.sign(priv_key) #required to verify transaction
     response = server.submit_transaction(transaction)
     if response['successful']:
-        transaction_info_url = "https://testnet.steexp.com/tx/"+response['hash']
+        transaction_info_url = "https://steexp.com/tx/"+response['hash']
         session['user_balance'] = get_bal(session['pub_key'])
         return transaction_info_url
     else:
