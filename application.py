@@ -11,16 +11,10 @@ base_fee = server.fetch_base_fee()
 @application.route('/')
 def home():
     """homepage"""
-    #render logged in page if wallet is active
-    if session.get('pub_key') != None:
-        if session.get('balance') in [None, 0]:
-            return render_template("main_logged_in.html",
+    if 'pub_key' in session:
+        return render_template("main_logged_in.html", 
             pub_address = session.get('pub_key'),
             pub_balance = session.get('user_balance'))
-        else:
-            return render_template("main_logged_in.html",
-        pub_address = session.get('pub_key'),
-        pub_balance = session.get('user_balance'))
     #page for non logged in users
     else:
         return render_template("main.html")
@@ -167,12 +161,12 @@ def remove_wallet():
 
 @application.route("/remove_conf")
 def remove_conf():
-    if session['priv_key'] != None:
-        session['priv_key'] = None
-    if session['pub_key'] != None:    
-        session['pub_key'] = None
-    if session['balance'] != None:
-        session['balance'] = None
+    if 'priv_key' in session:
+        session.pop('priv_key', None)
+    if 'pub_key' in session:    
+        session.pop('pub_key', None)
+    if 'balance' in session:
+        session.pop('balance', None)
     return render_template("remove_conf.html")
 
 @application.route("/view_secret")

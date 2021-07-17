@@ -5,7 +5,6 @@
 <h3><p>Welcome! Your wallet is connected.</p></h3>
 
 <p><button onclick="toggleAddress()">Toggle Address and Balance View</button></p>
-
 <div id="public_info">
 <h4><p>Your public address:<br>
     {{ pub_address }}</p>
@@ -16,9 +15,7 @@
     <p><a href = "/send">Send Funds</a></p>
     <p><a href="/check_balance">Check An Address Balance</a></p>
     <p><a href="/import_wallet">Recover Existing Wallet (will overwrite current wallet)<a></p>
-    
-    
-    
+
 <script>
 function toggleAddress() {
   var x = document.getElementById("public_info");
