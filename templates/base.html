@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
+
+  <head>
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <!--  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">-->
-  <style>
+<style>
+  @font-face {
+      font-family: "Tahoma", "Verdana";
+      src: local();
+    }
     .main{
       background-color:#aaa;
     }
     html, body, head {
       height: 96%;
     }
-    h5{text-align:center;}
     .footer{
       position: fixed;
       left: 0;
@@ -20,16 +24,12 @@
       height: 4%;
       line-height: 40px;
       background-color: #aaa;
-      color:#064579;
+      color:#000000;
       text-align: center;
     }
     .footer p{
       display: inline-block;
       vertical-align: middle;
-      }
-    @font-face {
-      font-family: "Tahoma", "Verdana";
-      src: local();
     }
     p {
       text-align: center;
@@ -39,29 +39,35 @@
       font-family: Consolas;
       font-size: 40px;
     }
+    h2{
+      text-align: center;
+    }
     h3 {
       text-align: center;
+    }
+    h5 {
+      text-align:center;
     }
     body {
       font-family: "Verdana", sans-serif;
       background-color: #eee;
     }
     .sidenav {
-      width: 130px;
+      width: fit-content;
       position: fixed;
       z-index: 1;
       top: 25px;
-      left: 13px;
+      left: 5px;
       background: #d3d3d3;
       overflow-x: hidden;
-      padding: 8x 0;
-      padding-top: 10px;
+      padding: 0px;
+      padding-top: 8px;
       padding-bottom: 10px;
     }
     .sidenav a {
       padding: 6px 8px 6px 16px;
       text-decoration: none;
-      font-size: 25px;
+      font-size: 24px;
       color: #2196F3;
       display: block;
     }
@@ -78,7 +84,7 @@
       .sidenav {padding-top: 15px;}
       .sidenav a {font-size: 18px;}
     }
-  </style>
+    </style>
   </head>
   {% block head %}
   <title>{% block title %}{% endblock %}</title>
@@ -87,11 +93,26 @@
 
 <body>
   <div class="sidenav">
-    <a href="/">Home</a>
+    <a href="/"">Home</a>
     <a href="/about">About</a>
+    <a href="/where_to_buy">Buying XLM</a>
   </div>
 
+  <!--begin flash message-->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+<h3>{{ message }}</h3>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<!--end flash message-->
   <div id="content">{% block content %}{% endblock %}</div>
+
+
+{% block body %}{% endblock %}
 
   <div class="footer">
     <a href="/remove_wallet">Remove Wallet</a>&nbsp;&nbsp;

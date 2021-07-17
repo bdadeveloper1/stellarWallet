@@ -2,8 +2,8 @@
 {% block title %}Confirmation{% endblock %}
 
 {% block content %}
-    <h3>Transaction unsuccessful</h3>
-    <p>Sorry, your transaction could not be processed.</p>
+    <h3>Transaction unsuccessful.</h3>
+    <p>{{ err_msg }}</p>
         <p><a href = "/send">Send More</a></p>
         <p><a href = "/check_balance">Check Address Balance</a></p>
         <p><a href = "/">Home</a><br></p>

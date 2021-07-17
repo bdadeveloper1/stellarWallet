@@ -14,14 +14,18 @@
 <br>
   <p>Amount (XLM):</p>
     <label for="amount"></label>
-    <p><input type="number" name = "amount" min="0" step="0.0000001" required pattern="[0-9]"></p>
+    <p><input type="number" name = "amount" min="0.001" max="{{ session.get('user_balance') }}" step="0.0000001" required pattern="[0-9]"></p>
   <p>Note that XLM is only precise to seven decimal places.</p>
-  
-    <label for = "submit"></label>
+  {% if user_balance > 1 %}
     <div id ="submit_transaction_button"><p><button type="submit"
       onclick="disableSubmit">Submit Transaction</button></p></div>
+    {% else %}
+    <div id ="submit_transaction_button"><p><button disabled type="submit"
+      onclick="disableSubmit">Submit Transaction</button></p></div>
+      <p>You need to fund your account first!</p>
+    {% endif %}
+    <p>Current network fee: {{ fee }} stroops ({{ fee_xlm }} XLM)</p>
   </form>
-
 <script>
   function disableSubmit(){
     var x = document.getElementById("submit_transaction_button");

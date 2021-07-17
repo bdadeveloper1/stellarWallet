@@ -8,13 +8,15 @@
 <div id="public_info">
 <h4><p>Your public address:<br>
     {{ pub_address }}</p>
-<p>Balance: {{ pub_balance }} XLM</p></h4>
+<p>Balance: {{ user_balance }} XLM</p></h4>
+<p><button disabled>Refresh Balance</button></p>
 </div>
 
     <p>Select what you'd like to do:</p>
-    <p><a href = "/send">Send Funds</a></p>
-    <p><a href="/check_balance">Check An Address Balance</a></p>
-    <p><a href="/import_wallet">Recover Existing Wallet (will overwrite current wallet)<a></p>
+      <p><a href = "/send">Send Funds</a></p>
+      <p><a href="/check_balance">Check An Address Balance</a></p>
+      <p><a href="/import_wallet">Recover Existing Wallet (will overwrite current wallet)<a></p>
+      <p>Current XLM Price: ${{ lumen_price }} (via <a href = "https://coingecko.com">CoinGecko</a>)</p>
 
 <script>
 function toggleAddress() {
