@@ -2,9 +2,12 @@ from flask import Flask, render_template, redirect, request, session, flash
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
 from stellar_sdk.exceptions import NotFoundError
 import requests
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 application = Flask(__name__)
-application.secret_key = "wasdfghjkl"
+application.secret_key = os.getenv('SECRET_KEY')
 server = Server(horizon_url="https://horizon.stellar.org")
 base_fee = server.fetch_base_fee()
 
@@ -32,7 +35,7 @@ def create_result():
     return render_template("create_success.html",
     phrase = phrase)
 
-@application.route("/import_wallet", methods=['POST', 'GET'])
+@application.route('/import_wallet', methods=['POST', 'GET'])
 def import_wallet():
    """page for importing a new wallet using 12 word seed phrase"""
    return render_template("import_wallet.html")
@@ -64,7 +67,7 @@ def imported():
         err_msg = "Seed phrases are 12 words long. Please try again."
         return render_template("import_failed.html", err_msg=err_msg)
 
-@application.route("/check_balance", methods = ['POST', 'GET'])
+@application.route('/check_balance', methods = ['POST', 'GET'])
 def check_balance():
     """page asks user to input an address"""
     return render_template("check_balance.html")
@@ -80,7 +83,7 @@ def get_bal(address):
         return 0
 
 
-@application.route("/balance", methods = ['POST', 'GET'])
+@application.route('/balance', methods = ['POST', 'GET'])
 def balance():
     """page displays balance of previously input address"""
     balance = get_bal(request.form['address'])
@@ -94,7 +97,7 @@ def balance():
 # in a balance below the required amount
 # todo: disable send button after send button is clicked
 # todo: prevent sending when address and amount are invalid
-@application.route("/send", methods = ['POST', 'GET'])
+@application.route('/send', methods = ['POST', 'GET'])
 def send():
     """page for inputting data to send money"""
     if session.get('balance') == 0:
@@ -134,7 +137,7 @@ def transact():
         return False
 
 #todo: add verification page before transaction goes through?
-@application.route("/send_conf", methods = ['POST', 'GET'])
+@application.route('/send_conf', methods = ['POST', 'GET'])
 def send_conf():
     """page to output confirmation with recipient address and amount.
     displays link to view transaction info on stellar explorer"""
@@ -147,12 +150,12 @@ def send_conf():
     else:
         return render_template("send_failed.html")
 
-@application.route("/about")
+@application.route('/about')
 def about():
     """page for info about stellar/the wallet"""
     return render_template("about.html")
 
-@application.route("/remove_wallet")
+@application.route('/remove_wallet')
 def remove_wallet():
     if session['priv_key'] == None:
         flash("There is no wallet connected!")
@@ -160,7 +163,7 @@ def remove_wallet():
     else:
         return render_template("remove_wallet.html")
 
-@application.route("/remove_conf")
+@application.route('/remove_conf')
 def remove_conf():
     if 'priv_key' in session:
         session.pop('priv_key', None)
@@ -170,7 +173,7 @@ def remove_conf():
         session.pop('balance', None)
     return render_template("remove_conf.html")
 
-@application.route("/view_secret")
+@application.route('/view_secret')
 def view_secret():
     if session['priv_key'] == None:
         return redirect("/")
