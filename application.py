@@ -40,10 +40,6 @@ def create():
 def create_result():
     """page for displaying seed phrase"""
     phrase = Keypair.generate_mnemonic_phrase()
-    #i assume this is the way to store the keys for the session
-#    session['priv_key'] = new_keypair.secret
-#    session['pub_key'] = new_keypair.public_key
-#    session['user_balance'] = get_bal(session['pub_key'])
     return render_template("create_success.html",
     phrase = phrase)
 
