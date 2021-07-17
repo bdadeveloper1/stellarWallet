@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 application = Flask(__name__)
-application.secret_key = os.getenv('SECRET_KEY')
+application.secret_key = "cb97eb2a6536f6838dbc7d049088f6cac425afc0" #os.getenv('SECRET_KEY')
 server = Server(horizon_url="https://horizon.stellar.org")
 base_fee = server.fetch_base_fee()
 
