@@ -11,17 +11,14 @@ base_fee = server.fetch_base_fee()
 @application.route('/')
 def home():
     """homepage"""
+    #page for users with a connected wallet
     if 'pub_key' in session:
         return render_template("main_logged_in.html", 
             pub_address = session.get('pub_key'),
             pub_balance = session.get('user_balance'))
-    #page for non logged in users
+    #page for no wallet
     else:
         return render_template("main.html")
-        
-  #  else:
-   #     return render_template("main_logged_in.html",
-    #    pub_address = session['pub_key'])
 
 @application.route('/create')
 def create():
@@ -90,8 +87,13 @@ def balance():
     if balance == 0:
         return render_template("balance_failed.html")
     else:
-        return render_template("balance.html", balance=balance)
+        return render_template("balance.html", balance = balance)
 
+# todo: prevent sending when wallet is empty;
+# prevent sending an amount of XLM that would result
+# in a balance below the required amount
+# todo: disable send button after send button is clicked
+# todo: prevent sending when address and amount are invalid
 @application.route("/send", methods = ['POST', 'GET'])
 def send():
     """page for inputting data to send money"""
@@ -131,6 +133,7 @@ def transact():
     else:
         return False
 
+#todo: add verification page before transaction goes through?
 @application.route("/send_conf", methods = ['POST', 'GET'])
 def send_conf():
     """page to output confirmation with recipient address and amount.
