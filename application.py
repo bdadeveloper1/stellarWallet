@@ -185,5 +185,5 @@ def view_secret():
 
 # run the app
 if __name__ == "__main__":
-    application.debug = True
+    application.debug = False
     application.run()
