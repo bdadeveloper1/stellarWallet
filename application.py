@@ -35,7 +35,6 @@ def create_result():
     return render_template("create_success.html",
     phrase = phrase)
 
-# to do: save user's wallet once it is imported
 @application.route("/import_wallet", methods=['POST', 'GET'])
 def import_wallet():
    """page for importing a new wallet using 12 word seed phrase"""
@@ -60,10 +59,9 @@ def imported():
         account_url = "https://horizon.stellar.org/accounts/"+str(session['pub_key'])
         account_info = requests.get(account_url).json()
         try:
-            session['balance'] = account_info['balances'][0]['balance']
-            # session['balance'] = balance
+            session['user_balance'] = account_info['balances'][0]['balance']
         except KeyError:
-            session['balance'] = 0
+            session['user_balance'] = 0
         return render_template("import_success.html")
     else:
         err_msg = "Seed phrases are 12 words long. Please try again."
