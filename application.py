@@ -14,11 +14,9 @@ def home():
     #render logged in page if wallet is active
     if session.get('pub_key') != None:
         if session.get('balance') in [None, 0]:
-            zero_bal = "This account has not received any Lumens yet."
             return render_template("main_logged_in.html",
             pub_address = session.get('pub_key'),
-            pub_balance = session.get('user_balance'),
-            zero_bal = zero_bal)
+            pub_balance = session.get('user_balance'))
         else:
             return render_template("main_logged_in.html",
         pub_address = session.get('pub_key'),
@@ -58,12 +56,12 @@ def imported():
         try: #verify mnenomic is valid
             imported_key = Keypair.from_mnemonic_phrase(phrase)
         except ValueError:
-            err_msg = "Invalid mnemonic, please check if the mnemonic is correct."
+            err_msg = "Invalid mnemonic entered, please double check your input."
             return render_template("import_failed.html", err_msg=err_msg)
         session['priv_key'] = imported_key.secret
         session['pub_key'] = imported_key.public_key
         #accounts do not "exist" on the blockchain if unfunded
-        #therefore, we will try to retrive the balance
+        #therefore, we will try to retrieve the balance
         #if we can't, we just set it to 0
         account_url = "https://horizon.stellar.org/accounts/"+str(session['pub_key'])
         account_info = requests.get(account_url).json()
@@ -72,10 +70,7 @@ def imported():
             # session['balance'] = balance
         except KeyError:
             session['balance'] = 0
-            return render_template("import_failed.html",
-            err_msg = "This address has no Lumens yet.")
-        return render_template("import_success.html",
-        balance = session.get('balance'))
+        return render_template("import_success.html")
     else:
         err_msg = "Seed phrases are 12 words long. Please try again."
         return render_template("import_failed.html", err_msg=err_msg)
@@ -108,6 +103,9 @@ def balance():
 @application.route("/send", methods = ['POST', 'GET'])
 def send():
     """page for inputting data to send money"""
+    if session.get('balance') == 0:
+        flash("You have no XLM to send!")
+        return redirect("/")
     return render_template("send.html")
 
 def transact():
@@ -118,8 +116,9 @@ def transact():
     except NotFoundError:
         return False
     amount = request.form['amount']
-    priv_key = session.get('priv_key')
     memo = request.form['memo']
+    priv_key = session.get('priv_key')
+
     transaction = (
     TransactionBuilder(
         source_account = source_account,
@@ -186,5 +185,5 @@ def view_secret():
 
 # run the app
 if __name__ == "__main__":
-#    application.debug = True
+    application.debug = True
     application.run()

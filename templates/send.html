@@ -5,11 +5,13 @@
   <p>Enter the Stellar address you'd like to send money to:
   <form action="/send_conf" method="POST">
     <p><input type="text" name="recipient_address" size="72" id="recipient_address" required pattern="[G][A-Z0-9]{55}"></p>
-
+<br>
   <p>Memo (may not be required - confirm with recipient):</p>
+  <h5>If you are sending XLM to an exchange (Coinbase, Binance, etc.),
+    you will very likely need a memo!</h5>
     <label for="memo"></label>
     <p><input type="text" name="memo"></p>
-
+<br>
   <p>Amount (XLM):</p>
     <label for="amount"></label>
     <p><input type="number" name = "amount" min="0" step="0.0000001" required pattern="[0-9]"></p>
