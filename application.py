@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, session, flash
-from flask.helpers import url_for
+#from flask_talisman import Talisman
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
 from stellar_sdk.exceptions import NotFoundError, BadRequestError
 import requests
@@ -8,7 +8,9 @@ import os
 
 load_dotenv()
 application = Flask(__name__)
+#Talisman(application)
 application.secret_key = "cb97eb2a6536f6838dbc7d049088f6cac425afc0" #os.getenv("SECRET_KEY")
+
 server = Server(horizon_url="https://horizon.stellar.org")
 base_fee = server.fetch_base_fee()
 
@@ -16,22 +18,22 @@ base_fee = server.fetch_base_fee()
 def home():
     """homepage"""
     #page for users with a connected wallet
-    lumen_price = get_price()
-    print(lumen_price)
+    price = get_price()
+    print(price)
     if "pub_key" in session:
         return render_template("main_logged_in.html", 
             pub_address = session.get("pub_key"),
             user_balance = session.get("user_balance"),
-            lumen_price = lumen_price)
+            price = price)
     #page for no wallet
     else:
         return render_template("main.html",
-        lumen_price = lumen_price)
+        price = price)
 
 def get_price():
     try:
-        lumen_price = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd").json()
-        return lumen_price['stellar']['usd']
+        price = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd").json()
+        return "$"+str(price['stellar']['usd'])
     except:
         return "Cannot be retrieved"
 
@@ -43,6 +45,7 @@ def create():
 @application.route("/create_result")
 def create_result():
     """page for displaying seed phrase"""
+    
     phrase = Keypair.generate_mnemonic_phrase()
     return render_template("create_success.html",
     phrase = phrase)
