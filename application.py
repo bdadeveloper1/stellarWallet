@@ -1,4 +1,3 @@
-from json import dump
 from flask import Flask, render_template, redirect, request, session, flash
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
 from stellar_sdk.exceptions import NotFoundError
