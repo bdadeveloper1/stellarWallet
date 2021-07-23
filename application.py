@@ -231,4 +231,4 @@ def more():
 
 # run the app
 if __name__ == "__main__":
-    application.run(debug = True)
+    application.run(debug = False)
