@@ -4,6 +4,7 @@ A basic web wallet for interacting with and transacting on the Stellar blockchai
 
 Future Plans:
 - Updated layout (in progress)
+- Disable send transaction button after sending to avoid multiple transactions
 - Add balance refresh option to homepage
 - More crypto assets
 - More fiat currency options for displaying XLM balance and market spot price
