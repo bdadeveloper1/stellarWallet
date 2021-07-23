@@ -7,3 +7,4 @@ Future Plans:
 - Add balance refresh option to homepage
 - More crypto assets
 - More fiat currency options for displaying XLM balance and market spot price
+- Better/more proper handling of session variables
