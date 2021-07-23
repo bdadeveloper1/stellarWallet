@@ -26,7 +26,7 @@ def home():
     #also shows time of last update
     usd_price = cg.get_price()
     update_time = datetime.fromtimestamp(time.time())
-    update_time = update_time.strftime("%b %d %H:%M:%S EST")
+    update_time = update_time.strftime("%b %d %H:%M:%S UTC")
 
     #clear sending info just in case
     session.pop('recipient_address', None)
