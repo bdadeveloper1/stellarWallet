@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Confirmation{% endblock %}
+
+{% block content %}
+    <h3>Confirm Transaction</h3>
+    <p>You are about to send {{ amount }} XLM to the following address:</p>
+    <p>{{ address }}</p>
+    <form method="POST" action = "send_result"> 
+    <div id ="submit_transaction_button"><p><button type="submit"
+        onclick="disableSubmit">Confirm Transaction</button></p></div>
+    </form>
+        <p><a href = "/send">Go Back</a></p>
+        <br>
+        <p><a href = "/">Home</a><br></p>
+
+        <script>
+            function disableSubmit(){
+              var x = document.getElementById("submit_transaction_button");
+              x.disabled = true;
+            }
+          </script>
+    {% endblock %}

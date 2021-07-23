@@ -67,7 +67,7 @@
     .sidenav a {
       padding: 6px 8px 6px 16px;
       text-decoration: none;
-      font-size: 24px;
+      font-size: 20px;
       color: #2196F3;
       display: block;
     }
@@ -93,9 +93,10 @@
 
 <body>
   <div class="sidenav">
-    <a href="/"">Home</a>
+    <a href="/">Home</a>
     <a href="/about">About</a>
     <a href="/where_to_buy">Buying XLM</a>
+    <a href="/more">More</a>
   </div>
 
   <!--begin flash message-->
@@ -113,11 +114,11 @@
 
 
 {% block body %}{% endblock %}
-
+<!--this is moved to the "more" menu in the sidebar
   <div class="footer">
     <a href="/remove_wallet">Remove Wallet</a>&nbsp;&nbsp;
     <a href="/view_secret">View Secret Key</a>
   </div>
-
+-->
 </body>
 </html>
