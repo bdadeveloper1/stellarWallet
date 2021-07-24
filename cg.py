@@ -1,3 +1,5 @@
+# function for getting stellar price
+# mostly just to keep the main application.py file shorter/cleaner.
 import requests
 
 def get_price():

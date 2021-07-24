@@ -7,6 +7,8 @@ import time #get current system time
 from datetime import datetime #convert unix timestamps to readable time formats
 import os #access environment tokens
 import cg #coingecko api for lumen price
+import numpy as np #storing arrays for transaction info
+import pandas as pd #storing dataframe of transaction list
 
 #import environment variables/tokens
 load_dotenv()
@@ -15,6 +17,7 @@ application.secret_key = os.getenv("SECRET_KEY")
 
 #connect to stellar horizon server
 server = Server(horizon_url="https://horizon.stellar.org")
+account_url = "https://horizon.stellar.org/accounts/"
 
 #get transaction fee from server
 base_fee = server.fetch_base_fee()
@@ -35,12 +38,12 @@ def home():
 
     #page for users with a connected wallet
     if "pub_key" in session:
-        user_balance = get_bal(session.get('pub_key'))
+        user_balance = get_bal(session['pub_key'])
         return render_template("main_logged_in.html", 
             pub_address = session.get("pub_key"),
             user_balance = float(user_balance),
             price = "$"+str(usd_price),
-            usd_equiv = "~$"+str(round(float(user_balance)*usd_price, 4)),
+            usd_equiv = "~$"+str(round(float(user_balance)*usd_price, 2)),
             update_time = update_time)
 
     #page for no wallet
@@ -83,8 +86,7 @@ def imported():
         #accounts do not "exist" on the blockchain if unfunded
         #therefore, we will try to retrieve the balance
         #if we can't, we just set it to 0
-        account_url = "https://horizon.stellar.org/accounts/"+str(session.get('pub_key'))
-        account_info = requests.get(account_url).json()
+        account_info = requests.get(account_url+session['pub_key']).json()
         try:
             session['user_balance'] = account_info['balances'][0]['balance']
         except KeyError:
@@ -101,9 +103,8 @@ def check_balance():
 
 def get_bal(address):
     """function to retrieve wallet ballance from horizon"""
-    account_url = "https://horizon.stellar.org/accounts/"+str(address)
     try:
-        account_info = requests.get(account_url).json()
+        account_info = requests.get(account_url+address).json()
         balance = account_info['balances'][0]['balance']
         return balance
     except:
@@ -118,10 +119,14 @@ def balance():
     else:
         return render_template("balance.html", balance = balance)
 
-################################ todo #########################################
-# 1. disable send button after send button is clicked to avoid double spending
-# 2. disable send button when address and amount are invalid
-###############################################################################
+def get_transactions():
+    pass
+
+@application.route("/transactions")
+def transactions():
+    return render_template("transactions_list.html",
+    address = session['pub_key'])
+
 @application.route("/send", methods = ['POST', 'GET'])
 def send_money():
     """page for inputting data to send money"""
@@ -130,8 +135,14 @@ def send_money():
     fee = base_fee,
     fee_xlm = format(base_fee/10000000, ".7f"))
 
+################################ todo #########################################
+# 1. disable send button after send button is clicked to avoid double spending
+# 2. disable send button when address and amount are invalid
+###############################################################################
 @application.route("/send_confirm", methods=['POST', 'GET'])
 def send_confirm():
+    """page for user to confirm that recipient address and amount
+    are correct"""
     session['recipient_address'] = request.form['recipient_address']
     session['memo'] = request.form['memo']
     session['amount'] = request.form['amount']
@@ -171,8 +182,6 @@ def send_transaction():
     except BadRequestError as e:
         return e
 
-################################ todo #########################################
-# add verification/confirmation page before transaction goes through
 @application.route("/send_result", methods = ['POST', 'GET'])
 def send_result():
     """page to output confirmation with recipient address and amount.
@@ -231,4 +240,5 @@ def more():
 
 # run the app
 if __name__ == "__main__":
-    application.run(debug = False)
+#    application.debug = True
+    application.run()
