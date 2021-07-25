@@ -7,8 +7,8 @@ import time #get current system time
 from datetime import datetime #convert unix timestamps to readable time formats
 import os #access environment tokens
 import cg #coingecko api for lumen price
-import numpy as np #storing arrays for transaction info
 import pandas as pd #storing dataframe of transaction list
+import qrcode #generate qrcode for receiving address
 
 #import environment variables/tokens
 load_dotenv()
@@ -17,7 +17,9 @@ application.secret_key = os.getenv("SECRET_KEY")
 
 #connect to stellar horizon server
 server = Server(horizon_url="https://horizon.stellar.org")
+#for getting account info
 account_url = "https://horizon.stellar.org/accounts/"
+#for getting transaction history
 tx_url = "https://horizon.stellar.org/transactions/"
 
 #get transaction fee from server
@@ -29,22 +31,23 @@ def home():
     #get latest XLM price from coingecko
     #also shows time of last update
     usd_price = cg.get_price()
-    update_time = datetime.fromtimestamp(time.time())
-    update_time = update_time.strftime("%b %d %H:%M:%S UTC")
-
-    #clear sending info just in case
-    session.pop('recipient_address', None)
-    session.pop('amount', None)
-    session.pop('memo', None)
+    update_time = datetime.fromtimestamp(time.time()).strftime("%b %d %H:%M:%S UTC")
+    #clear session variables that are added when filling out "send funds" page
+    if 'recipient_address' in session:
+        session.pop('recipient_address', None)
+    if 'amount' in session:
+        session.pop('amount', None)
+    if 'memo' in session:
+        session.pop('memo', None)
 
     #page for users with a connected wallet
     if "pub_key" in session:
-        user_balance = get_bal(session['pub_key'])
+        session['user_balance'] = get_bal(session['pub_key'])
         return render_template("main_logged_in.html", 
             pub_address = session.get("pub_key"),
-            user_balance = float(user_balance),
+            user_balance = float(session['user_balance']),
             price = "$"+str(usd_price),
-            usd_equiv = "~$"+str(round(float(user_balance)*usd_price, 2)),
+            usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
             update_time = update_time)
 
     #page for no wallet
@@ -52,6 +55,15 @@ def home():
         return render_template("main.html",
         price = "$"+str(usd_price),
         update_time = update_time)
+
+def get_bal(address):
+    """function to retrieve wallet ballance"""
+    try:
+        account_info = requests.get(account_url+address).json()
+        balance = account_info['balances'][0]['balance']
+        return balance
+    except:
+        return 0
 
 @application.route("/create")
 def create():
@@ -97,31 +109,25 @@ def imported():
         err_msg = "Seed phrases are 12 words long. Please try again."
         return render_template("import_failed.html", err_msg=err_msg)
 
-@application.route("/check_balance", methods = ['post', 'get'])
-def check_balance():
-    """page asks user to input an address"""
-    return render_template("check_balance.html")
+@application.route("/qr_code")
+def qr_code():
+    generate_qr_code()
+    return render_template("qr_code.html",
+    address = session['pub_key'])
 
-def get_bal(address):
-    """function to retrieve wallet ballance from horizon"""
-    try:
-        account_info = requests.get(account_url+address).json()
-        balance = account_info['balances'][0]['balance']
-        return balance
-    except:
-        return 0
-
-@application.route("/balance", methods = ['post', 'get'])
-def balance():
-    """page displays balance of previously input address"""
-    balance = get_bal(request.form['address'])
-    if balance == 0:
-        return render_template("balance_failed.html")
-    else:
-        return render_template("balance.html", balance = balance)
+def generate_qr_code():
+    qr = qrcode.QRCode(version=1,
+    box_size = 8,
+    border = 1)
+    qr.add_data(session['pub_key'])
+    qr.make(fit = True)
+    img = qr.make_image(fill_color = "black",
+                        back_color = "white")
+    img.save("static/qr_code.png")
+    session['qr'] = session['pub_key']
 
 def get_transactions(address):
-    """function to get list of historical transactions"""
+    """function to get list of historical transactions for user address"""
     tx_df = pd.DataFrame()
     try:
         transactions = server.transactions().for_account(account_id = address).call()
@@ -174,9 +180,6 @@ def get_transactions(address):
     "Type":tx_type, "Amount (XLM)": tx_amount, "Fee (XLM)":tx_fee,
     "Sender":tx_sender, "Recipient":tx_recipient})
     return tx_df
-    
-def format_df():
-    pass
 
 @application.route("/transactions")
 def transactions():

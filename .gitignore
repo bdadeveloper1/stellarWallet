@@ -2,6 +2,10 @@
 /functions.py
 /testnet.py
 /testwallet.txt
+/templates/check_balance.html
+/templates/balance_failed.html
+/static/qr_code.png
+
 /.DS_Store
 /__pycache__
 __pycache__/
@@ -11,7 +15,7 @@ __pycache__/
 .env
 venv/
 /.vscode
-
+/qrcode
 
 instance/
 .coverage

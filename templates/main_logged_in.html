@@ -15,11 +15,10 @@
 </div>
 
     <p>Select what you'd like to do:</p>
-      <p><a href = "/send">Send Funds</a></p>
-      <p><a href="/transactions">View Transaction History</a></p>
-      <p><a href="/check_balance">Check An Address Balance</a></p>
-      <br>
-      <p>Current XLM Price: {{ price }} (via <a href = "https://coingecko.com">CoinGecko</a>)</p>
+      <p><a href = "/send"><button type="button">Send Funds</button></a></p>
+      <p><a href="qr_code"><button type="button">Display QR Code</button></a></p>
+      <p><a href="/transactions"><button type="button">View Transaction History</button></a></p>
+      <p>Current XLM Price: {{ price }} via <a href = "https://coingecko.com">CoinGecko</a></p>
       <p style="font-size:12px">Last update: {{ update_time }}</p>
       <p style="font-size:12px">Price updates upon refresh.</p>
       <p style="font-size: 15px;"><a href="/import_wallet">Recover Existing Wallet (will overwrite current wallet)<a></p>
