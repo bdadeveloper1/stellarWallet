@@ -18,6 +18,7 @@ application.secret_key = os.getenv("SECRET_KEY")
 #connect to stellar horizon server
 server = Server(horizon_url="https://horizon.stellar.org")
 account_url = "https://horizon.stellar.org/accounts/"
+tx_url = "https://horizon.stellar.org/transactions/"
 
 #get transaction fee from server
 base_fee = server.fetch_base_fee()
@@ -119,13 +120,76 @@ def balance():
     else:
         return render_template("balance.html", balance = balance)
 
-def get_transactions():
+def get_transactions(address):
+    """function to get list of historical transactions"""
+    tx_df = pd.DataFrame()
+    try:
+        transactions = server.transactions().for_account(account_id = address).call()
+    except BadRequestError:
+        return tx_df
+    tx_count = len(transactions['_embedded']['records'])
+    tx_list = []
+    tx_fee = [None for i in range(tx_count)]
+    #append url of transaction operations to tx_list
+    #this will let us get the info needed for every transaction
+    for i in range(tx_count):
+        hash = transactions['_embedded']['records'][i]['hash']
+        tx_fee[i] = format(int(transactions['_embedded']['records'][i]['fee_charged'])/10000000, ".7f")
+        tx_list.append(tx_url+hash+"/operations")
+    tx_count = len(transactions['_embedded']['records'])
+
+    tx_type = [None for i in range(tx_count)]
+    tx_sender = [None for i in range(tx_count)]
+    tx_recipient = [None for i in range(tx_count)]
+    tx_amount = [None for i in range(tx_count)]
+    tx_date = [None for i in range(tx_count)]
+
+    for i, value in enumerate(tx_list):
+        tx_info = requests.get(value).json()
+        tx_data = tx_info['_embedded']['records'][0]
+        #special rule for the first inbound transaction which is when the wallet is created
+        if tx_data['type'] == "create_account":
+            tx_type[i] = "Account Creation"
+            tx_amount[i] = tx_data['starting_balance']
+            tx_sender[i] = tx_data['funder']
+            tx_recipient[i] = "You"
+        #all other transactions
+        else:
+            tx_amount[i] = tx_data['amount']
+            if tx_data['from'] == session['pub_key']:
+                tx_sender[i] = "You"
+                tx_type[i] = "Sent"
+            else:
+                tx_sender[i] = tx_data['from']
+            if tx_data['to'] == session['pub_key']:
+                tx_recipient[i] = "You"
+                tx_type[i] = "Received"
+            else:
+                tx_recipient[i] = tx_data['to']
+        tx_date[i] = tx_data['created_at']
+    
+    tx_date_reformat = [datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ") for date in tx_date]
+    tx_date_reformat = [date.strftime("%b %d %Y, %H:%M:%S") for date in tx_date_reformat]
+    tx_df = pd.DataFrame({"Date (UTC)": tx_date_reformat,
+    "Type":tx_type, "Amount (XLM)": tx_amount, "Fee (XLM)":tx_fee,
+    "Sender":tx_sender, "Recipient":tx_recipient})
+    return tx_df
+    
+def format_df():
     pass
 
 @application.route("/transactions")
 def transactions():
+    tx_df = get_transactions(session['pub_key'])
+    table = tx_df.to_html(index = False)
+    if tx_df.empty:
+        err_msg = "Error: transaction history could not be retrieved."
+        return render_template("transactions_list.html",
+        address = session['pub_key'],
+        err_msg = err_msg)
     return render_template("transactions_list.html",
-    address = session['pub_key'])
+    address = session['pub_key'],
+    table = table)
 
 @application.route("/send", methods = ['POST', 'GET'])
 def send_money():
@@ -136,9 +200,7 @@ def send_money():
     fee_xlm = format(base_fee/10000000, ".7f"))
 
 ################################ todo #########################################
-# 1. disable send button after send button is clicked to avoid double spending
-# 2. disable send button when address and amount are invalid
-###############################################################################
+# disable send button after send button is clicked to avoid double spending
 @application.route("/send_confirm", methods=['POST', 'GET'])
 def send_confirm():
     """page for user to confirm that recipient address and amount
@@ -155,8 +217,8 @@ def send_transaction():
     """function to actually process and confirm transactions"""
     try:
         source_account = server.load_account(session.get("pub_key"))
-    except NotFoundError:
-        return False
+    except NotFoundError as e:
+        return e
     recipient_address = session.get('recipient_address')
     amount = session.get('amount')
     memo = session.get('memo')
@@ -187,7 +249,7 @@ def send_result():
     """page to output confirmation with recipient address and amount.
     displays link to view transaction info on stellar explorer"""
     result = send_transaction()
-    if result != BadRequestError:
+    if result not in [BadRequestError, NotFoundError]:
         return render_template("send_success.html",
         address = session.get('recipient_address'),
         amount = session.get('amount'),
@@ -240,5 +302,5 @@ def more():
 
 # run the app
 if __name__ == "__main__":
-#    application.debug = True
+    application.debug = True
     application.run()

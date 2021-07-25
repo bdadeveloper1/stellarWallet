@@ -15,7 +15,7 @@
 
   <p>Amount (XLM):</p>
     <label for="amount"></label>
-    <p><input type="number" name = "amount" min="0.001" max="{{ user_balance - 1 }}" step="0.0000001" required pattern="[0-9]"></p>
+    <p><input type="number" name = "amount" min="0.001" max="{{ user_balance - 1.00001 }}" step="0.0000001" required pattern="[0-9]"></p>
   <p style="font-size: 12px">XLM is only precise to seven digits after the decimal.</p>
 <p>Wallets require a minimum balance of 1 XLM, so you cannot send your entire balance.</p>
   {% if user_balance > 1 %}
