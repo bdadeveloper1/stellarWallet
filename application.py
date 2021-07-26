@@ -47,6 +47,7 @@ def home():
         session['user_balance'] = get_bal(session.get('pub_key'))
     else:
         logged_in = False
+        session['user_balance'] = 0
     return render_template("main.html", 
         pub_address = session.get("pub_key"),
         user_balance = float(session['user_balance']),
