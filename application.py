@@ -40,7 +40,7 @@ def home():
     if 'memo' in session:
         session.pop('memo', None)
 
-    #page for users with a connected wallet
+    #check if wallet is currently connected
     if 'pub_key' in session:
         logged_in = True
     else:
@@ -309,5 +309,5 @@ def more():
 
 # run the app
 if __name__ == "__main__":
-    application.debug = True
+#    application.debug = True
     application.run()
