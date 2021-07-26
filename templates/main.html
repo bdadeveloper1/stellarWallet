@@ -11,15 +11,16 @@
 
 <p><button id="toggleButton" onclick="toggleBalance();changeText()">Hide Balance</button></p>
 <div id="userBalance">
-<p>Current Balance: {{ user_balance }} XLM ({{ usd_equiv }})</p>
+<p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
 </div>
-<!-- to do: make this button call the get_bal function to refresh account balance 
-<p><button disabled>Refresh Balance</button></p>-->
+<!-- to do: make this button call the get_bal function to refresh account balance
+        **without** refreshing the page-->
+<p><button onClick="window.location.reload();">Refresh Balance</button></p>
 
 {% else %}
 <h4>There is no wallet connected.</h4>
 {% endif %}
-
+<br>
 <p>Select what you'd like to do:</p>
 {% if logged_in %}
 <p><a href = "/send"><button type="button">Send Funds</button></a></p>
@@ -30,8 +31,8 @@
 <p><a href="/create"><button type="button">Create A New Wallet</button></a></p>
         <p><a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a></p>
 {% endif %}
-<div id ="priceinfo"><p>Current XLM Price: {{ price }} via <a href = "https://www.coingecko.com/en/coins/stellar" target="_blank">CoinGecko</a></p>
-    <p style="font-size:12px">Last update: {{ update_time }}</p>
+<div id ="priceinfo"><p>Current XLM Price: {{price}} via <a href = "https://www.coingecko.com/en/coins/stellar" target="_blank">CoinGecko</a></p>
+    <p style="font-size:12px">Last update: {{update_time}}</p>
     <p style="font-size:12px">Price updates upon refresh.</p>
 </div>
 
@@ -45,6 +46,7 @@
       user_info.style.display = "none";
     }
   }
+
   //change balance button text when clicked
     function changeText(){
       var toggleButton = document.getElementById("toggleButton");

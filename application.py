@@ -17,11 +17,10 @@ application.secret_key = os.getenv("SECRET_KEY")
 
 #connect to stellar horizon server
 server = Server(horizon_url="https://horizon.stellar.org")
-#for getting account info
+#getting account info/balance
 account_url = "https://horizon.stellar.org/accounts/"
-#for getting transaction history
+#getting transaction history
 tx_url = "https://horizon.stellar.org/transactions/"
-
 #get transaction fee from server
 base_fee = server.fetch_base_fee()
 
@@ -131,7 +130,6 @@ def generate_qr_code():
     img = qr.make_image(fill_color = "black",
                         back_color = "white")
     img.save("static/qr_code.png")
-    session['qr'] = session['pub_key']
 
 def get_transactions(address):
     """function to get list of historical transactions for user address"""

@@ -3,12 +3,15 @@
 
 {% block content %}
     <h3>Confirm Transaction</h3>
-    <p>You are about to send {{ amount }} XLM to the following address:</p>
-    <p>{{ address }}</p>
+    <p>You are about to send {{amount}} XLM to the following address:</p>
+    <p>{{address}}</p>
+    <p>Be sure to double check the amount and address are correct.</p>
+    <p>Submitted transactions cannot be undone.</p>
     <form method="POST" action = "send_result"> 
     <div id ="submit_transaction_button"><p><button type="submit"
         onclick="disableSubmit">Confirm Transaction</button></p></div>
     </form>
+
     <form action="/">
       <div id ="submit_transaction_button">
         <p><button type="submit">Cancel</button></p>
