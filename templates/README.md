@@ -1,6 +1,6 @@
 <h1>Template Files</h1>
 
-<h3>Home</h3>
+<h3>Main</h3>
 Homepage for the website.
 
 <h3>Import Wallet</h3>
