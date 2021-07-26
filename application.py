@@ -32,7 +32,7 @@ def home():
     #also shows time of last update
     usd_price = cg.get_price()
     update_time = datetime.fromtimestamp(time.time()).strftime("%b %d %H:%M:%S UTC")
-    #clear session variables that are added when filling out "send funds" page
+    #clear session variables that may be leftover from filling out "send funds" page
     if 'recipient_address' in session:
         session.pop('recipient_address', None)
     if 'amount' in session:
@@ -41,20 +41,24 @@ def home():
         session.pop('memo', None)
 
     #page for users with a connected wallet
-    if "pub_key" in session:
-        session['user_balance'] = get_bal(session['pub_key'])
-        return render_template("main_logged_in.html", 
-            pub_address = session.get("pub_key"),
-            user_balance = float(session['user_balance']),
-            price = "$"+str(usd_price),
-            usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
-            update_time = update_time)
+    if 'pub_key' in session:
+        logged_in = True
+    else:
+        logged_in = False
+    return render_template("main.html", 
+        pub_address = session.get("pub_key"),
+        user_balance = float(session['user_balance']),
+        price = "$"+str(usd_price),
+        usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
+        update_time = update_time,
+        logged_in = logged_in)
 
     #page for no wallet
-    else:
-        return render_template("main.html",
-        price = "$"+str(usd_price),
-        update_time = update_time)
+    #else:
+        #return render_template("main_logged_out.html",
+        #price = "$"+str(usd_price),
+        #update_time = update_time,
+        #flag = 0)
 
 def get_bal(address):
     """function to retrieve wallet ballance"""
@@ -305,5 +309,5 @@ def more():
 
 # run the app
 if __name__ == "__main__":
-#    application.debug = True
+    application.debug = True
     application.run()

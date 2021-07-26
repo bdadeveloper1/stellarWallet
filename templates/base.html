@@ -2,9 +2,11 @@
 <html>
 <head>
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com"> 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400&display=swap" rel="stylesheet">
+
 <style>
   @font-face {
       font-family: "Tahoma", "Verdana";
@@ -71,6 +73,9 @@
     }
     h3 {
       text-align: center;
+    } 
+    h4 {
+      text-align: center;
     }
     h5 {
       text-align:center;
@@ -115,7 +120,7 @@
   </head>
   {% block head %}
   <title>{% block title %}{% endblock %}</title>
-  <h1>CryptoShare<br>Stellar Lumens Wallet</h1>
+  <h1>Crypto$hare<br>Stellar Lumens Wallet</h1>
   {% endblock %}
 
 <body>
@@ -135,10 +140,12 @@
     </ul>
   {% endif %}
 {% endwith %}
-  <div id="content">{% block content %}{% endblock %}</div>
 
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
 
-{% block body %}{% endblock %}
 
 </body>
 </html>

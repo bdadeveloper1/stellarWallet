@@ -2,12 +2,58 @@
 {% block title %}Stellar Wallet - Home{% endblock %}
 
 {% block content %}
-<h4><p>Welcome! There is currently no wallet connected.</p></h4>
-    <p>Select what you'd like to do:</p>
-        <p><a href="/create">Create A New Wallet</a></p>
-        <p><a href="/import_wallet">Recover An Existing Wallet</a></p>
-        <p><a href="/check_balance">Check An Address Balance</a></p>
-        <p>Current XLM Price: {{ price }} (via <a href = "https://coingecko.com">CoinGecko</a>)</p>
-        <p style="font-size:12px">Last update: {{ update_time }}</p>
-        <p style="font-size:12px">Price updates upon refresh.</p>
+
+<h3>Welcome!</h3>
+
+{% if logged_in %}
+<p>Your public address:<br>
+    {{ pub_address }}</p>
+
+<p><button id="toggleButton" onclick="toggleBalance();changeText()">Hide Balance</button></p>
+<div id="userBalance">
+<p>Current Balance: {{ user_balance }} XLM ({{ usd_equiv }})</p>
+</div>
+<!-- to do: make this button call the get_bal function to refresh account balance 
+<p><button disabled>Refresh Balance</button></p>-->
+
+{% else %}
+<h4>There is no wallet connected.</h4>
+{% endif %}
+
+<p>Select what you'd like to do:</p>
+{% if logged_in %}
+<p><a href = "/send"><button type="button">Send Funds</button></a></p>
+      <p><a href="qr_code"><button type="button">Display QR Code</button></a></p>
+      <p><a href="/transactions"><button type="button">View Transaction History</button></a></p>
+
+{% else %}
+<p><a href="/create"><button type="button">Create A New Wallet</button></a></p>
+        <p><a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a></p>
+{% endif %}
+<div id ="priceinfo"><p>Current XLM Price: {{ price }} via <a href = "https://www.coingecko.com/en/coins/stellar" target="_blank">CoinGecko</a></p>
+    <p style="font-size:12px">Last update: {{ update_time }}</p>
+    <p style="font-size:12px">Price updates upon refresh.</p>
+</div>
+
+<script>
+    //toggle visibility of balance
+  function toggleBalance() {
+    var user_info = document.getElementById("userBalance");
+    if (user_info.style.display === "none") {
+      user_info.style.display = "block";
+    } else {
+      user_info.style.display = "none";
+    }
+  }
+  //change balance button text when clicked
+    function changeText(){
+      var toggleButton = document.getElementById("toggleButton");
+    if (toggleButton.innerHTML == "Hide Balance"){
+      toggleButton.innerHTML = "Show Balance";
+    } else{
+      toggleButton.innerHTML = "Hide Balance";
+    }
+  }
+  </script>
+
 {% endblock %}

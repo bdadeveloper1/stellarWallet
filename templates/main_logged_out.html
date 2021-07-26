@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3><p>Welcome! There is currently no wallet connected.</p></h3>
+    <p>Select what you'd like to do:</p>
+        <p><a href="/create"><button type="button">Create A New Wallet</button></a></p>
+        <p><a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a></p>
+        <p><a href="/check_balance"><button type="button">Check An Address Balance</button></a></p>
+        <div id ="priceinfo"><p>Current XLM Price: {{ price }} via <a href = "https://coingecko.com">CoinGecko</a></p>
+            <p style="font-size:12px">Last update: {{ update_time }}</p>
+            <p style="font-size:12px">Price updates upon refresh.</p>
+        </div>
+        
+{% endblock %}
