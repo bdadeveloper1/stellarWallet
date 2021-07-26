@@ -28,6 +28,7 @@ base_fee = server.fetch_base_fee()
 @application.route("/")
 def home():
     """homepage"""
+    print(session.keys())
     #get latest XLM price from coingecko
     #also shows time of last update
     usd_price = cg.get_price()
@@ -43,6 +44,7 @@ def home():
     #check if wallet is currently connected
     if 'pub_key' in session:
         logged_in = True
+        session['user_balance'] = get_bal(session.get('pub_key'))
     else:
         logged_in = False
     return render_template("main.html", 
