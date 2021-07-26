@@ -28,7 +28,7 @@ base_fee = server.fetch_base_fee()
 @application.route("/")
 def home():
     """homepage"""
-    print(session.keys())
+    #print(session.keys())
     #get latest XLM price from coingecko
     #also shows time of last update
     usd_price = cg.get_price()
