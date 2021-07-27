@@ -14,13 +14,13 @@
 <p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
 </div>
 <!-- to do: make this button call the get_bal function to refresh account balance
-        **without** refreshing the page-->
+        WITHOUT refreshing the page-->
 <p><button onClick="window.location.reload();">Refresh Balance</button></p>
 
 {% else %}
 <h4>There is no wallet connected.</h4>
 {% endif %}
-<br>
+
 <p>Select what you'd like to do:</p>
 {% if logged_in %}
 <p><a href = "/send"><button type="button">Send Funds</button></a></p>
@@ -37,25 +37,25 @@
 </div>
 
 <script>
-    //toggle visibility of balance
-  function toggleBalance() {
-    var user_info = document.getElementById("userBalance");
-    if (user_info.style.display === "none") {
+//toggle visibility of balance
+function toggleBalance() {
+  var user_info = document.getElementById("userBalance");
+  if (user_info.style.display === "none") {
       user_info.style.display = "block";
     } else {
       user_info.style.display = "none";
     }
   }
 
-  //change balance button text when clicked
-    function changeText(){
-      var toggleButton = document.getElementById("toggleButton");
-    if (toggleButton.innerHTML == "Hide Balance"){
-      toggleButton.innerHTML = "Show Balance";
-    } else{
-      toggleButton.innerHTML = "Hide Balance";
-    }
+//change hide/show balance button text when clicked
+function changeText(){
+  var toggleButton = document.getElementById("toggleButton");
+  if (toggleButton.innerHTML == "Hide Balance"){
+    toggleButton.innerHTML = "Show Balance";
+  } else {
+    toggleButton.innerHTML = "Hide Balance";
   }
-  </script>
+}
+</script>
 
 {% endblock %}

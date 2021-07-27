@@ -21,8 +21,12 @@ server = Server(horizon_url="https://horizon.stellar.org")
 account_url = "https://horizon.stellar.org/accounts/"
 #getting transaction history
 tx_url = "https://horizon.stellar.org/transactions/"
+
 #get transaction fee from server
-base_fee = server.fetch_base_fee()
+try:
+    base_fee = server.fetch_base_fee()
+except:
+    base_fee = 100
 
 @application.route("/")
 def home():
@@ -32,6 +36,7 @@ def home():
     #also shows time of last update
     usd_price = cg.get_price()
     update_time = datetime.fromtimestamp(time.time()).strftime("%b %d %H:%M:%S UTC")
+
     #clear session variables that may be leftover from filling out "send funds" page
     if 'recipient_address' in session:
         session.pop('recipient_address', None)
@@ -54,13 +59,6 @@ def home():
         usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
         update_time = update_time,
         logged_in = logged_in)
-
-    #page for no wallet
-    #else:
-        #return render_template("main_logged_out.html",
-        #price = "$"+str(usd_price),
-        #update_time = update_time,
-        #flag = 0)
 
 def get_bal(address):
     """function to retrieve wallet ballance"""
@@ -268,11 +266,11 @@ def send_result():
 
 @application.route("/remove_wallet")
 def remove_wallet():
-    if "priv_key" not in session:
+    if "priv_key" in session:
+        return render_template("remove_wallet.html")
+    else:
         flash("Cannot remove wallet: there is no wallet connected.")
         return redirect("/")
-    else:
-        return render_template("remove_wallet.html")
 
 @application.route("/remove_conf")
 def remove_conf():
@@ -284,14 +282,14 @@ def remove_conf():
         session.pop("balance", None)
     return render_template("remove_conf.html")
 
-@application.route("/view_secret")
+@application.route("/view_secret", methods=['GET'])
 def view_secret():
-    if "priv_key" not in session:
+    if "priv_key" in session:
+        return render_template("view_secret.html",
+        priv_key = session['priv_key'])
+    else:
         flash("Cannot view secret key: there is no wallet connected.")
         return redirect("/")
-    else:
-        return render_template("view_secret.html",
-        priv_key = session.get("priv_key"))
 
 @application.route("/about")
 def about():

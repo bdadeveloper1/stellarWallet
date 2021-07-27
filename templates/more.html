@@ -2,6 +2,24 @@
 {% block title %}More{% endblock %}
 
 {% block content %}
-<p><a href="/remove_wallet">Remove Wallet</a></p>
-<p><a href="/view_secret">View Secret Key</a></p>
+
+<form action="/remove_wallet">
+    <p>
+        <button>Remove Wallet</button>
+    </p>
+</form>
+
+<form action="/view_secret">
+    <p>
+        <button>View Secret Key</button>
+    </p>
+</form>
+
+<!--
+<form>
+    <p>
+        <button>Toggle Night Mode (coming soon)</button>
+    </p>
+</form>
+-->
 {% endblock %}
