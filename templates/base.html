@@ -1,151 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang = "en-US">
 <head>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com"> 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400&display=swap" rel="stylesheet">
-
-<style>
-  @font-face {
-      font-family: "Tahoma", "Verdana";
-      src: local();
-    }
-    .main{
-      background-color:#aaa;
-    }
-    .center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-    html, body, head {
-      height: 96%;
-    }
-    table.dataframe, .dataframe th, .dataframe td {
-      border: indianred;
-      border-bottom: 2px solid #aaa;
-      border-top: 1px solid #aaa;
-      border-right: 1px solid #aaa;
-      border-left: 1px solid #aaa;
-      border-top: 1px solid #aaa;
-      border-collapse: collapse;
-      text-align:left;
-      padding: 10px;
-      margin-bottom: 40px;
-      font-size: 0.9em;
-      align-self: center;
-      margin-left: auto; 
-      margin-right: auto;
-      white-space: nowrap;
-      overflow: scroll;
-      text-overflow: ellipsis;
-      max-width: 200px; 
-      word-wrap: break-word;
-}
-    .footer{
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 4%;
-      line-height: 40px;
-      background-color: #aaa;
-      color:#000000;
-      text-align: center;
-    }
-    .footer p{
-      display: inline-block;
-      vertical-align: middle;
-    }
-    p {
-      text-align: center;
-    }
-    h1 {
-      text-align: center;
-      font-family: 'Fira Sans', sans-serif;
-      font-size: 40px;
-    }
-    h2{
-      text-align: center;
-    }
-    h3 {
-      text-align: center;
-    } 
-    h4 {
-      text-align: center;
-    }
-    h5 {
-      text-align:center;
-    }
-    body {
-      font-family: "Verdana", sans-serif;
-      background-color: #eee;
-    }
-    .sidenav {
-      width: fit-content;
-      position: fixed;
-      z-index: 1;
-      top: 25px;
-      left: 5px;
-      background: #d3d3d3;
-      overflow-x: hidden;
-      padding: 0px;
-      padding-top: 8px;
-      padding-bottom: 10px;
-    }
-    .sidenav a {
-      padding: 6px 8px 6px 16px;
-      text-decoration: none;
-      font-size: 16px;
-      color: #2196F3;
-      display: block;
-    }
-    .sidenav a:hover {
-      color: #064579;
-    }
-    .main {
-      margin-left: 140px; /* Same width as the sidebar + left position in px */
-      font-size: 28px; /* Increased text to enable scrolling */
-      padding: 0px 10px;
-    }
-    
-    @media screen and (max-height: 450px) {
-      .sidenav {padding-top: 15px;}
-      .sidenav a {font-size: 18px;}
-    }
-    </style>
-  </head>
-  {% block head %}
   <title>{% block title %}{% endblock %}</title>
-  <h1>Crypto$hare<br>Stellar Lumens Wallet</h1>
-  {% endblock %}
+</head>
 
 <body>
-  <div class="sidenav">
-    <a href="/">Home</a>
-    <a href="/about">About</a>
-    <a href="/where_to_buy">Buying Stellar Lumens (XLM)</a>
-    <a href="/more">More</a>
+<div class = "container">
+      <div class = "main">
+        <nav class = "navigation">
+          <a href="https://worlddatascience.tech" target="_blank">
+            <img src="static/logo.png" alt="World Data Science Institute" class="logo">
+          </a>
+        </nav>
+        <header class = "header">
+          <h2 class = "title">Crypto$hare<br>Stellar Lumens Wallet</h2>
+        <ul class="pills">
+          <li class="pill"><a href="/">Home</a></li>
+          <li class="pill"><a href="/about">About</a></li>
+          <li class="pill"><a href="/where_to_buy">Buy Stellar Lumens (XLM)</a></li>
+          <li class="pill"><a href="/more">More</a></li>
+        </ul>
+      </header>
+
+      {% block content %}
+      {% endblock %}
+  
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul class=flashes>
+        {% for message in messages %}
+        <h3>{{ message }}</h3>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      
+    
   </div>
+</div>
 
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-<h3>{{ message }}</h3>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-
-  <div id="content">
-    {% block content %}
-    {% endblock %}
-  </div>
-
+<a href="https://www.youtube.com/watch?v=1VIyn4emOhQ" target="_blank" title="CryptoShare Application" style="position: fixed; bottom: 10px; right: 10px">
+  <img src="http://co0kie.github.io/codepen/youtube.png" alt="">
+</a>
 
 </body>
 </html>

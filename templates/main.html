@@ -2,60 +2,62 @@
 {% block title %}Stellar Wallet - Home{% endblock %}
 
 {% block content %}
-
-<h3>Welcome!</h3>
-
-{% if logged_in %}
-<p>Your public address:<br>
-    {{ pub_address }}</p>
-
-<p><button id="toggleButton" onclick="toggleBalance();changeText()">Hide Balance</button></p>
-<div id="userBalance">
-<p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
 </div>
+
+<div class = "card">
+  <div class= "card_top">
+    {% if logged_in %}
+    <strong class="name">Welcome back!</strong>
+    {% else %}
+    <strong class="name">Welcome!<br>
+    There is no wallet connected.</strong>
+    {% endif %}
+  </div>
+  <div class="card_mid">
+    <p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
+    <ul class="pills">
+      <div class = "table">
+    <li class="pill" style="display:inline-block;" onClick="window.location.reload();">
+      <a href="/">Refresh Balance</a>
+    </li>
+  </div>
+  </ul>
 <!-- to do: make this button call the get_bal function to refresh account balance
         WITHOUT refreshing the page-->
-<p><button onClick="window.location.reload();">Refresh Balance</button></p>
-
-{% else %}
-<h4>There is no wallet connected.</h4>
-{% endif %}
-
-<p>Select what you'd like to do:</p>
-{% if logged_in %}
-<p><a href = "/send"><button type="button">Send Funds</button></a></p>
-      <p><a href="qr_code"><button type="button">Display QR Code</button></a></p>
-      <p><a href="/transactions"><button type="button">View Transaction History</button></a></p>
-
-{% else %}
-<p><a href="/create"><button type="button">Create A New Wallet</button></a></p>
-        <p><a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a></p>
-{% endif %}
-<div id ="priceinfo"><p>Current XLM Price: {{price}} via <a href = "https://www.coingecko.com/en/coins/stellar" target="_blank">CoinGecko</a></p>
-    <p style="font-size:12px">Last update: {{update_time}}</p>
-    <p style="font-size:12px">Price updates upon refresh.</p>
+  </div>
+  {% if logged_in %}
+  <div class="card_bottom">
+    Your public address:<br>
+      {{ pub_address }}
+  </div>
+  {% else %}
+  {% endif %}
 </div>
 
-<script>
-//toggle visibility of balance
-function toggleBalance() {
-  var user_info = document.getElementById("userBalance");
-  if (user_info.style.display === "none") {
-      user_info.style.display = "block";
-    } else {
-      user_info.style.display = "none";
-    }
-  }
+<div class = "card">
+  <div class = "card_top">
+    <strong class="name"><p>Select what you'd like to do:</p></strong>
+    {% if logged_in %}
+    <div class = "card_mid">
+      <p><a href = "/send"><button type="button">Send Funds</button></a><br></p>
+      <p><a href="qr_code"><button type="button">Display QR Code</button></a><br></p>
+      <p><a href="/transactions"><button type="button">View Transaction History</button></a><br></p>
+      {% else %}
+      <a href="/create"><button type="button">Create A New Wallet</button></a></p>
+      <a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
-//change hide/show balance button text when clicked
-function changeText(){
-  var toggleButton = document.getElementById("toggleButton");
-  if (toggleButton.innerHTML == "Hide Balance"){
-    toggleButton.innerHTML = "Show Balance";
-  } else {
-    toggleButton.innerHTML = "Hide Balance";
-  }
-}
-</script>
+<div class="card">
+  <div class="card_top">
+    <strong class="price" style="text-align: center;">XLM Market Price - Past 24 Hours</strong>
+  </div>
+  <div class="card_mid">
+    <script src="https://widgets.coingecko.com/coingecko-coin-price-chart-widget.js"></script>
+    <coingecko-coin-price-chart-widget  coin-id="stellar" currency="usd" height="300" locale="en"></coingecko-coin-price-chart-widget>
+  </div>
+</div>
 
 {% endblock %}

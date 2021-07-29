@@ -1,29 +1,508 @@
-html { font-family: Verdana; background: #e0e0e0; }
-
-.sidenav {
-  height: 50%; /* Full-height: remove this if you want "auto" height */
-  width: 160px; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: rgb(196, 28, 28); /* Black */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 10px;
+p {
+  text-align: center;
+}
+.table {
+	display: table;   /* Allow the centering to work */
+	margin: 0 auto;
+}
+table.dataframe, .dataframe th, .dataframe td {
+  border: indianred;
+  border-bottom: 2px solid #aaa;
+  border-top: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-top: 1px solid #aaa;
+  border-collapse: collapse;
+  text-align:left;
+  padding: 10px;
+  margin-bottom: 40px;
+  font-size: 0.9em;
+  align-self: center;
+  margin-left: auto; 
+  margin-right: auto;
+  white-space: nowrap;
+  overflow: scroll;
+  text-overflow: ellipsis;
+  max-width: 200px; 
+  word-wrap: break-word;
+}
+:root {
+  --width: 600px;
+  --height: auto;
+  --bg: #dde2e7;
+  --containerPadding: 30px;
+  --blue: 28, 105, 212;
+  --lightgray: #f8f9f9;
+  --lightgray2: #f4f4f8;
+  --lightgray3: #f8f8f8;
+  --txtcolo1: #5f6061;
+  --transition: 200ms;
+  --transitionDelay1: 100ms;
+  --transitionDelay2: 300ms;
+  --transitionDelay3: 450ms;
 }
 
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-  color: #f1f1f1;
+* {
+  box-sizing: border-box;
 }
 
-/* Style page content */
+.verticalHorizontal, .inner_header, .card_bottom > div, .card_bottom, .card_top, .navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  margin:auto;
+}
+
+body {
+  background-color: var(--bg);
+  height: 100vh;
+  display: flex;
+  font-family: "Roboto", sans-serif;
+}
+
+.container {
+  overflow: hidden;
+  position: relative;
+  margin: auto;
+  width: var(--width);
+  height: var(--height);
+  background-color: var(--lightgray2);
+}
+
 .main {
-  margin-left: 160px; /* Same as the width of the sidebar */
-  padding: 0px 10px;
+  padding: var(--containerPadding);
+  min-height: auto;
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+.navigation {
+  position: relative;
+  z-index: 1;
+}
+.navigation > a {
+  display: flex;
+}
+.navigation .logo {
+  width: 100%;
+  max-width: 48px;
+}
+.navigation > button {
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 2px solid black;
+  color: transparent;
+  width: 18px;
+  height: 18px;
+  outline: 0;
+}
+.navigation > button::after, .navigation > button::before {
+  transition: var(--transition);
+  content: "";
+  position: absolute;
+  width: 25px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: black;
+  right: 0;
+}
+.navigation > button::before {
+  top: 0;
+}
+.navigation > button::after {
+  bottom: 6px;
+}
+.navigation > button.active {
+  border-bottom: 0;
+}
+.navigation > button.active::before {
+  top: 7px;
+  transform: rotate(45deg);
+  bottom: 0;
+  background-color: white;
+}
+.navigation > button.active::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+  top: 7px;
+  background-color: white;
+}
+
+.header {
+  transition: var(--transition) ease-in-out;
+  transition-delay: var(--transitionDelay1);
+  margin: 20px 0;
+  opacity: 1;
+}
+.header .title {
+  font-weight: 500;
+  font-size: 30px;
+  margin: 0 0 20px;
+}
+.show .header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pills {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+}
+.pills .pill {
+  padding: 7px 22px;
+  text-align: center;
+  background-color: #eee;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--txtcolo1);
+  transition: var(--transition);
+}
+.pills .pill:hover {
+  cursor: default;
+  background-color: rgba(28, 105, 212, 0.1);
+}
+.pills .pill.active {
+  background-color: #1c69d4;
+  color: white;
+}
+.card {
+  transition: var(--transition);
+  transition-delay: var(--transitionDelay2);
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  text-align: center;
+}
+.card + .card {
+  margin-top: 30px;
+  text-align: center;
+}
+.card_top {
+  padding-left: 20px;
+  padding-top: 15px;
+  padding-right: 20px;
+  width: auto;
+  text-align: center;
+}
+.card_top > .name {
+  font-size: 20px;
+  text-align: center;
+}
+
+.card_top > .price {
+  font-size: 20px;
+  text-align: center;
+}
+
+.card_top > span {
+  font-size: 14px;
+  background-color: var(--bg);
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-weight: 700;
+  color: var(--txtcolo1);
+}
+.card_mid {
+  padding: 20px;
+  text-align: center;
+}
+.card_mid > img {
+  width: 100%;
+  max-width: 290px;
+}
+.card_bottom {
+  padding: 20px;
+  background-color: var(--lightgray3);
+  text-align: center;
+}
+.card_bottom > div > img {
+  width: 100%;
+  max-width: 290px;
+}
+.card_bottom > div > small {
+  margin-left: 10px;
+  color: var(--txtcolo1);
+}
+.show .card {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--width);
+  height: var(--height);
+  padding: var(--containerPadding);
+  transform: translate(100%, 0);
+  transition: var(--transition) ease-in-out;
+  transition-delay: var(--transitionDelay3);
+  background-color: #1c69d4;
+  margin-bottom: 80px;
+}
+.inner::before {
+  content: "";
+  background-color: white;
+  width: 100%;
+  height: 47%;
+  position: absolute;
+  left: 0;
+  bottom: -20px;
+  transition: var(--transition) ease-in-out;
+  transition-delay: calc(var(--transitionDelay3) + 400ms);
+  transform: skew(0deg, -5deg) translate(0, 100%);
+  z-index: -1;
+}
+.show .inner::before {
+  transform: skew(0deg, -5deg) translate(0, 0);
+}
+.inner_header {
+  transition: var(--transition) ease-in-out;
+  transition-delay: calc(var(--transitionDelay3) + 200ms);
+  opacity: 0;
+  margin-top: 80px;
+}
+.inner_header > button {
+  background-color: transparent;
+  border: 0;
+}
+.inner_header > button > img {
+  width: 20px;
+  height: 20px;
+}
+.inner_header > span {
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.18);
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-weight: 700;
+  color: white;
+}
+.inner_header-title {
+  color: white;
+  margin-left: 10px;
+  margin-right: auto;
+  margin-bottom: 0;
+  font-size: 2em;
+  margin-top: 0;
+}
+.show .inner_header {
+  opacity: 1;
+}
+.inner_body {
+  margin: 50px 0;
+}
+.inner_body .car {
+  transform: rotate(-5deg) translate(0, 20px);
+  opacity: 0;
+  filter: drop-shadow(-9px 12px 6px rgba(0, 0, 0, 0.5));
+  width: 95%;
+  margin: auto;
+  display: block;
+  transition: calc(var(--transition) + 200ms) ease-in-out;
+  transition-delay: calc(var(--transitionDelay3) + 260ms);
+}
+.show .inner_body .car {
+  transform: rotate(-5deg) translate(0, 0);
+  opacity: 1;
+}
+.inner_body .info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+.inner_body .info > div {
+  color: white;
+  font-weight: 700;
+  font-size: 24px;
+}
+.inner_body .info > div > small {
+  display: block;
+  opacity: 0.5;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.show .inner {
+  transform: translate(0, 0);
+}
+.inner_bottom {
+  margin-top: 80px;
+}
+.inner_bottom .gallery {
+  display: flex;
+  justify-content: space-between;
+}
+.inner_bottom .gallery > div {
+  width: 30%;
+  height: 170px;
+  transition: var(--transition) ease;
+  transition-delay: calc(var(--transitionDelay3) + 800ms);
+  transform: scale(0);
+}
+.show .inner_bottom .gallery > div {
+  transform: scale(1);
+}
+.inner_bottom .gallery > div > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.1);
+}
+.inner_bottom > button {
+  width: 100%;
+  margin-top: 50px;
+  background-color: #1c69d4;
+  border: 0;
+  padding: 20px;
+  font-size: 20px;
+  color: white;
+  border-radius: 5px;
+  transition: transform var(--transition) ease-in-out calc(var(--transitionDelay3) + 1s), background-color var(--transition) ease-in-out;
+  transform: scale(0);
+}
+.inner_bottom > button:hover {
+  background-color: rgba(28, 105, 212, 0.5);
+}
+.show .inner_bottom > button {
+  transform: scale(1);
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.container {
+  overflow: hidden;
+  position: relative;
+  margin: auto;
+  width: var(--width);
+  height: var(--height);
+  background-color: var(--lightgray2);
+}
+.navigation {
+  position: relative;
+  z-index: 1;
+}
+.navigation > a {
+  display: flex;
+}
+.navigation .logo {
+  width: 100%;
+  max-width: 30px;
+}
+.navigation > button {
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  border-left: 10px;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 2px solid black;
+  color: transparent;
+  width: 18px;
+  height: 18px;
+  outline: 0;
+}
+.navigation > button::after, .navigation > button::before {
+  transition: var(--transition);
+  content: "";
+  position: absolute;
+  width: 25px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: black;
+  right: 0;
+}
+.navigation > button::before {
+  top: 0;
+}
+.navigation > button::after {
+  bottom: 6px;
+}
+.navigation > button.active {
+  border-bottom: 0;
+}
+.navigation > button.active::before {
+  top: 7px;
+  transform: rotate(45deg);
+  bottom: 0;
+  background-color: white;
+}
+.navigation > button.active::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+  top: 7px;
+  background-color: white;
+}
+
+
+.footer{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4%;
+  line-height: 40px;
+  background-color: #aaa;
+  color:#000000;
+  text-align: center;
+}
+.footer p{
+  display: inline-block;
+  vertical-align: middle;
+}
+p {
+  text-align: center;
+}
+h1 {
+  text-align: center;
+  font-family: 'Fira Sans', sans-serif;
+}
+h2{
+  text-align: center;
+}
+h3 {
+  text-align: center;
+} 
+h4 {
+  text-align: center;
+}
+h5 {
+  text-align:center;
+}
+.sidenav {
+  width: fit-content;
+  position: fixed;
+  z-index: 1;
+  top: 25px;
+  left: 5px;
+  background: #064579;
+  overflow-x: hidden;
+  padding: 0px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #2196F3;
+  display: block;
+}
+.sidenav a:hover {
+  color: #064579;
+}
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
