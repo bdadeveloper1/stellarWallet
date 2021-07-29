@@ -5,6 +5,7 @@ A basic web wallet for interacting with and transacting on the Stellar blockchai
 Future Plans:
 - [x] Transaction history page
 - [x] QR code
+- [ ] Import wallet with private key
 - [ ] Updated layout (in progress)
 - [ ] Disable send transaction button after sending to avoid multiple transactions
 - [ ] Add balance refresh option to homepage
