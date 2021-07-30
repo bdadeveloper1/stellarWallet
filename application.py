@@ -53,7 +53,6 @@ def home():
     return render_template("main.html", 
         pub_address = session.get("pub_key"),
         user_balance = float(session['user_balance']),
-        price = "$"+str(usd_price),
         usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
         logged_in = logged_in)
 
@@ -267,7 +266,7 @@ def send_transaction():
         network_passphrase = Network.PUBLIC_NETWORK_PASSPHRASE,
         base_fee = base_fee,
         )
-    .add_text_memo(memo)
+    .add_memo(memo)
     .append_payment_op(recipient_address, amount)
     .set_timeout(30) #transaction valid for next 30 seconds
     .build()
