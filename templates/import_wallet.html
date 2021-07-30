@@ -4,12 +4,20 @@
 {% block content %}
 <p>To import an existing Stellar Lumens wallet, please enter your 12 word seed phrase.<br>
     Enter the entire phrase, all lowercase, and with a space between each word.</p>
-<form action="/imported" method="POST">
+<form action="/import_result" method="POST">
     <p><input action="/imported" size="80"
     type="text" name="phrase" pattern="[a-zA-Z][a-zA-Z ]+{4,}"
-    autofocus required
     title="Enter your entire seed phrase with spaces."></p>
-    <p><button type="submit" formaction="/imported">Submit</button></p>
+    <p><button type="submit">Submit Seed Phrase</button></p>
 </form>
-<p>Please note that wallets created with other services/apps may not be importable with this wallet.</p>
+<br>
+
+<p>Alternatively, you may enter the 56 character secret key associated with your wallet.</p>
+<p style="font-size: 90%;">Secret keys begin with an <b>S</b> and consist of 56 alphanumeric characters.</p>
+
+<form action="/import_result" method="POST">
+    <p><input size="80" type="text" name="secret_key" pattern="[S][A-Z0-9]{55}"></p>
+    <p><button type="submit">Submit Secret Key</button></p>
+</form>
+<p>Please note that wallets created with other services/apps may not be importable.</p>
 {% endblock %}

@@ -2,8 +2,6 @@
 {% block title %}Stellar Wallet - Home{% endblock %}
 
 {% block content %}
-</div>
-
 <div class = "card">
   <div class= "card_top">
     {% if logged_in %}
@@ -14,6 +12,7 @@
     {% endif %}
   </div>
   <div class="card_mid">
+    {% if logged_in %}
     <p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
     <ul class="pills">
       <div class = "table">
@@ -22,10 +21,7 @@
     </li>
   </div>
   </ul>
-<!-- to do: make this button call the get_bal function to refresh account balance
-        WITHOUT refreshing the page-->
   </div>
-  {% if logged_in %}
   <div class="card_bottom">
     Your public address:<br>
       {{ pub_address }}
@@ -37,15 +33,17 @@
 <div class = "card">
   <div class = "card_top">
     <strong class="name"><p>Select what you'd like to do:</p></strong>
-    {% if logged_in %}
     <div class = "card_mid">
-      <p><a href = "/send"><button type="button">Send Funds</button></a><br></p>
-      <p><a href="qr_code"><button type="button">Display QR Code</button></a><br></p>
-      <p><a href="/transactions"><button type="button">View Transaction History</button></a><br></p>
+      <ul class="pills">
+        {% if logged_in %}
+      <li class="pill" style="display:inline-block;"><a href="/send">Send Funds</a></li>
+      <li class="pill" style="display:inline-block;"><a href="/qr_code">Display QR Code</a></li>
+      <li class="pill" style="display:inline-block;"><a href="/transactions">View Transaction History</a></li>
       {% else %}
-      <a href="/create"><button type="button">Create A New Wallet</button></a></p>
-      <a href="/import_wallet"><button type="button">Recover An Existing Wallet</button></a>
+      <li class="pill"><a href="/create">Create A New Wallet</a></li></p>
+      <li class="pill"><a href="/import_wallet">Recover An Existing Wallet</a></li>
       {% endif %}
+    </ul>
     </div>
   </div>
 </div>

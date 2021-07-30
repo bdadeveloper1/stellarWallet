@@ -2,23 +2,17 @@
 {% block title %}More{% endblock %}
 
 {% block content %}
-
-<form action="/remove_wallet">
-    <p>
-        <button>Remove Wallet</button>
-    </p>
-</form>
-
-<form action="/view_secret">
-    <p>
-        <button>View Secret Key</button>
-    </p>
-</form>
+<br>
+<div class = "table">
+<ul class="pills">
+    <li class="pill"><a href="/remove_wallet">Remove Wallet</a></li>
+    <li class="pill"><a href="/view_secret">View Secret Key</a></li>
+</ul>
+</div>
 
 <!--
-<form>
     <p>
         <button>Toggle Night Mode (coming soon)</button>
     </p>
-</form>-->
+-->
 {% endblock %}

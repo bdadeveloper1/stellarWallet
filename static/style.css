@@ -1,6 +1,16 @@
 p {
   text-align: center;
 }
+a:hover, a:visited, a:link, a:active
+{
+  text-decoration: none;
+}
+a:link {
+  color: #66f;
+}
+a:visited {
+  color: #66f;
+}
 .table {
 	display: table;   /* Allow the centering to work */
 	margin: 0 auto;
@@ -27,7 +37,7 @@ table.dataframe, .dataframe th, .dataframe td {
   word-wrap: break-word;
 }
 :root {
-  --width: 600px;
+  --width: 100vw;
   --height: auto;
   --bg: #dde2e7;
   --containerPadding: 30px;
@@ -65,16 +75,15 @@ body {
   overflow: hidden;
   position: relative;
   margin: auto;
-  width: var(--width);
+  width: auto;
   height: var(--height);
   background-color: var(--lightgray2);
 }
 
 .main {
   padding: var(--containerPadding);
-  min-height: auto;
+  height: 100%;
 }
-
 .navigation {
   position: relative;
   z-index: 1;
@@ -136,6 +145,7 @@ body {
   transition-delay: var(--transitionDelay1);
   margin: 20px 0;
   opacity: 1;
+  display: inline;
 }
 .header .title {
   font-weight: 500;
@@ -151,26 +161,30 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
+  display: inline-flex;
   justify-content: space-between;
 }
 .pills .pill {
   padding: 7px 22px;
+  margin: 1px;
   text-align: center;
-  background-color: #eee;
+  background-color: #ddd;
   border-radius: 20px;
   font-size: 16px;
   font-weight: 700;
   color: var(--txtcolo1);
   transition: var(--transition);
+  text-decoration: none;
 }
 .pills .pill:hover {
   cursor: default;
   background-color: rgba(28, 105, 212, 0.1);
+  text-decoration: none;
 }
-.pills .pill.active {
+.pills .pill:active {
   background-color: #1c69d4;
   color: white;
+  text-decoration: none;
 }
 .card {
   transition: var(--transition);
@@ -183,35 +197,29 @@ body {
 }
 .card + .card {
   margin-top: 30px;
-  text-align: center;
 }
 .card_top {
-  padding-left: 20px;
-  padding-top: 15px;
-  padding-right: 20px;
-  width: auto;
-  text-align: center;
+  padding-top: 20px;
+  display: inline-block;
 }
 .card_top > .name {
   font-size: 20px;
-  text-align: center;
 }
 
 .card_top > .price {
   font-size: 20px;
-  text-align: center;
 }
 
 .card_top > span {
   font-size: 14px;
   background-color: var(--bg);
-  padding: 4px 11px;
+  padding: 10px 11px;
   border-radius: 20px;
   font-weight: 700;
   color: var(--txtcolo1);
 }
 .card_mid {
-  padding: 20px;
+  padding: 10px;
   text-align: center;
 }
 .card_mid > img {
@@ -221,11 +229,11 @@ body {
 .card_bottom {
   padding: 20px;
   background-color: var(--lightgray3);
-  text-align: center;
+  display: inline-block;
 }
 .card_bottom > div > img {
   width: 100%;
-  max-width: 290px;
+  max-width: 300px;
 }
 .card_bottom > div > small {
   margin-left: 10px;
@@ -381,72 +389,8 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-.container {
-  overflow: hidden;
-  position: relative;
-  margin: auto;
-  width: var(--width);
-  height: var(--height);
-  background-color: var(--lightgray2);
-}
-.navigation {
-  position: relative;
-  z-index: 1;
-}
-.navigation > a {
-  display: flex;
-}
-.navigation .logo {
-  width: 100%;
-  max-width: 30px;
-}
-.navigation > button {
-  cursor: pointer;
-  position: relative;
-  background-color: transparent;
-  border-left: 10px;
-  border-right: 0;
-  border-top: 0;
-  border-bottom: 2px solid black;
-  color: transparent;
-  width: 18px;
-  height: 18px;
-  outline: 0;
-}
-.navigation > button::after, .navigation > button::before {
-  transition: var(--transition);
-  content: "";
-  position: absolute;
-  width: 25px;
-  height: 2px;
-  border-radius: 2px;
-  background-color: black;
-  right: 0;
-}
-.navigation > button::before {
-  top: 0;
-}
-.navigation > button::after {
-  bottom: 6px;
-}
-.navigation > button.active {
-  border-bottom: 0;
-}
-.navigation > button.active::before {
-  top: 7px;
-  transform: rotate(45deg);
-  bottom: 0;
-  background-color: white;
-}
-.navigation > button.active::after {
-  bottom: 0;
-  transform: rotate(-45deg);
-  top: 7px;
-  background-color: white;
-}
 
-
-.footer{
+.footer {
   position: fixed;
   left: 0;
   right: 0;
@@ -469,7 +413,7 @@ h1 {
   text-align: center;
   font-family: 'Fira Sans', sans-serif;
 }
-h2{
+h2 {
   text-align: center;
 }
 h3 {

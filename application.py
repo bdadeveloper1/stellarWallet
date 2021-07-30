@@ -1,9 +1,8 @@
 from flask import Flask, render_template, redirect, request, session, flash
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network #connect to horizon and transact on stellar blockchain
-from stellar_sdk.exceptions import NotFoundError, BadRequestError #failed transaction handling
+from stellar_sdk.exceptions import NotFoundError, BadRequestError, Ed25519SecretSeedInvalidError #failed transaction handling
 from dotenv import load_dotenv #load in environment variables/tokens
 import requests #get data from stellar/coingecko servers
-import time #get current system time
 from datetime import datetime #convert unix timestamps to readable time formats
 import os #access environment tokens
 import cg #coingecko api for lumen price
@@ -35,7 +34,6 @@ def home():
     #get latest XLM price from coingecko
     #also shows time of last update
     usd_price = cg.get_price()
-    update_time = datetime.fromtimestamp(time.time()).strftime("%b %d %H:%M:%S UTC")
 
     #clear session variables that may be leftover from filling out "send funds" page
     if 'recipient_address' in session:
@@ -57,7 +55,6 @@ def home():
         user_balance = float(session['user_balance']),
         price = "$"+str(usd_price),
         usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
-        update_time = update_time,
         logged_in = logged_in)
 
 def get_bal(address):
@@ -87,31 +84,65 @@ def import_wallet():
    """page for importing a new wallet using 12 word seed phrase"""
    return render_template("import_wallet.html")
 
-@application.route("/imported", methods=['POST', 'get'])
+@application.route("/import_result", methods=['POST', 'GET'])
 def imported():
     """page for status after entering seed phrase"""
+    if request.method == 'POST':
+        #importing a seed phrase
+        if 'phrase' in request.form:
+            import_result = import_phrase(request.form['phrase'])
+            if import_result == ValueError:
+                return render_template("import_failed.html", err_msg = "Invalid mnemonic entered, please double check your input.")
+            elif import_result == False:
+                return render_template("import_failed.html", err_msg = "Seed phrases consist of 12 words, please try again.")
+            else:
+                return render_template("import_success.html")
+        #importing a secret key
+        elif 'secret_key' in request.form:
+            import_result = import_key(request.form['secret_key'])
+            if import_result == False:
+                return render_template("import_failed.html", err_msg = "Invalid key entered, please double check your input.")
+            else:
+                return render_template("import_success.html")
+
+def import_phrase(phrase):
+    """helper function for 12 word seed phrase wallet recovery"""
     phrase = request.form['phrase']
-    pl = len(phrase.split(" ")) # get phrase length, split into words
-    if pl == 12: #check that there are twelve words
+    #verify the phrase is 12 words
+    if len(phrase.split(" ")) == 12:
         try: #verify mnenomic is valid
             imported_key = Keypair.from_mnemonic_phrase(phrase)
-        except ValueError:
-            err_msg = "Invalid mnemonic entered, please double check your input."
-            return render_template("import_failed.html", err_msg=err_msg)
+        except ValueError as e:
+            return e
+        #set session variables once wallet is successfully imported
         session['priv_key'] = imported_key.secret
         session['pub_key'] = imported_key.public_key
-        #accounts do not "exist" on the blockchain if unfunded
-        #therefore, we will try to retrieve the balance
-        #if we can't, we just set it to 0
+        #try to retrieve the balance
+        #if we can't (account has no transactions), we just set it to 0
         account_info = requests.get(account_url+session['pub_key']).json()
         try:
             session['user_balance'] = account_info['balances'][0]['balance']
         except KeyError:
             session['user_balance'] = 0
-        return render_template("import_success.html")
+        return True
     else:
-        err_msg = "Seed phrases are 12 words long. Please try again."
-        return render_template("import_failed.html", err_msg=err_msg)
+        return False
+
+def import_key(secret_key):
+    """helper function for importing wallets from a secret key"""
+    secret_key = request.form['secret_key']
+    try:
+        imported_key = Keypair.from_secret(secret_key)
+    except Ed25519SecretSeedInvalidError:
+        return False
+    session['priv_key'] = imported_key.secret
+    session['pub_key'] = imported_key.public_key
+    account_info = requests.get(account_url+session['pub_key']).json()
+    try:
+        session['user_balance'] = account_info['balances'][0]['balance']
+    except KeyError:
+        session['user_balance'] = 0
+    return True
 
 @application.route("/qr_code")
 def qr_code():
