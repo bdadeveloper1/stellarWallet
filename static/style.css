@@ -159,12 +159,12 @@ body {
   box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   text-align: center;
-  min-width: 500px;
+  min-width: 300px;
   margin-right: auto;
   margin-left: auto;
 }
 .card + .card {
-  margin-top: 30px;
+  margin-top: 25px;
 }
 .card_top {
   padding-top: 20px;
@@ -173,11 +173,6 @@ body {
 .card_top > .name {
   font-size: 20px;
 }
-
-.card_top > .price {
-  font-size: 20px;
-}
-
 .card_top > span {
   font-size: 14px;
   background-color: var(--bg);
@@ -196,8 +191,9 @@ body {
 .card_bottom {
   padding: 20px;
   background-color: var(--lightgray3);
-  display: inline-block;
+  display: inline-flex;
   border-radius: 5px;
+  overflow:inherit;
 }
 .card_bottom > div > img {
   width: 100%;
@@ -370,12 +366,9 @@ body {
   color:#000000;
   text-align: center;
 }
-.footer p{
+.footer p {
   display: inline-block;
   vertical-align: middle;
-}
-p {
-  text-align: center;
 }
 h1 {
   text-align: center;
@@ -418,6 +411,9 @@ h5 {
 p {
   text-align: center;
 }
+.address {
+  font-size: 80%;
+}
 a:hover, a:visited, a:link, a:active
 {
   text-decoration: none;
@@ -428,19 +424,24 @@ a:link {
 a:visited {
   color: #66f;
 }
-@media screen and (max-width: 1080px) {
+@media screen and (max-width: 1000px) {
   #container, #header, #content, #main {
     float: none;
     width: auto;
   }
   .header .title {
-    font-size: 3em;
+    font-size: 2.5em;
   }
+  .pills .pill {
+    font-size: 1.2em;
+  }
+
+
 }
 coingecko-coin-price-chart-widget {
   min-width: 200px;
-  max-width: 80%;
-  display: block;
+  max-width: 500px;
+  display: flex;
   margin-left: auto;
   margin-right: auto;
 }

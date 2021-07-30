@@ -21,11 +21,10 @@
     </li>
   </div>
   </ul>
-  </div>
-  <div class="card_bottom">
-    Your public address:<br><br>
-      {{ pub_address }}
-  </div>
+  <br><br>
+    Your public address:
+      <p class="address">{{pub_address}}</p>
+    </div>
   {% else %}
   {% endif %}
 </div>
@@ -50,7 +49,7 @@
 
 <div class="card">
   <div class="card_top">
-    <strong class="price" style="text-align: center;">XLM Market Price - Past 24 Hours</strong>
+    <strong class="name" style="text-align: center;">XLM Market Price - Past 24 Hours</strong>
   </div>
   <div class="card_mid">
     <script src="https://widgets.coingecko.com/coingecko-coin-price-chart-widget.js"></script>
