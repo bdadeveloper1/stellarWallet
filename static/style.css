@@ -8,7 +8,7 @@
   --lightgray2: #f4f4f8;
   --lightgray3: #f8f8f8;
   --txtcolo1: #5f6061;
-  --transition: 200ms;
+  --transition: 300ms;
   --transitionDelay1: 100ms;
   --transitionDelay2: 300ms;
   --transitionDelay3: 450ms;
@@ -114,14 +114,27 @@ body {
 }
 .header .title {
   font-weight: 500;
-  font-size: 30px;
+  font-size: 42px;
   margin: 0 0 20px;
 }
 .show .header {
   opacity: 0;
   pointer-events: none;
 }
-
+button {
+  padding: 7px 22px;
+  margin: 1px;
+  text-align: center;
+  background-color: #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c69d4;
+  transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  justify-content: space-between;
+}
 .pills {
   list-style: none;
   margin: 0;
@@ -162,16 +175,18 @@ body {
   min-width: 300px;
   margin-right: auto;
   margin-left: auto;
+  max-width: 800px;
 }
 .card + .card {
   margin-top: 25px;
 }
 .card_top {
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   display: inline-block;
 }
 .card_top > .name {
-  font-size: 20px;
+  font-size: 24px;
 }
 .card_top > span {
   font-size: 14px;
@@ -438,12 +453,13 @@ a:visited {
 
 
 }
-coingecko-coin-price-chart-widget {
+coingecko-coin-converter-widget {
   min-width: 200px;
   max-width: 500px;
   display: flex;
   margin-left: auto;
   margin-right: auto;
+  overflow: auto;
 }
 .table {
 	display: table;   /* Allow the centering to work */
@@ -469,4 +485,32 @@ table.dataframe, .dataframe th, .dataframe td {
   text-overflow: ellipsis;
   max-width: 200px; 
   word-wrap: break-word;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {
+  background-color: #ddd;
+}
+
+.show {
+  display: block;
 }

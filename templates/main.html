@@ -5,14 +5,17 @@
 <div class = "card">
   <div class= "card_top">
     {% if logged_in %}
-    <strong class="name">Welcome back!</strong>
+    <strong class="name">
+      Welcome back!<br>
+      Your wallet is connected.
+    </strong>
     {% else %}
     <strong class="name">Welcome!<br>
     There is no wallet connected.</strong>
     {% endif %}
   </div>
+  {% if logged_in %}
   <div class="card_mid">
-    {% if logged_in %}
     <p>Current Balance: {{user_balance}} XLM ({{usd_equiv}})</p>
     <ul class="pills">
       <div class = "table">
@@ -49,11 +52,11 @@
 
 <div class="card">
   <div class="card_top">
-    <strong class="name" style="text-align: center;">XLM Market Price - Past 24 Hours</strong>
+    <strong class="name" style="text-align: left;">XLM Price Conversion</strong>
   </div>
   <div class="card_mid">
-    <script src="https://widgets.coingecko.com/coingecko-coin-price-chart-widget.js"></script>
-    <coingecko-coin-price-chart-widget  coin-id="stellar" currency="usd" height="300" locale="en"></coingecko-coin-price-chart-widget>
+    <script src="https://widgets.coingecko.com/coingecko-coin-converter-widget.js"></script>
+    <coingecko-coin-converter-widget  coin-id="stellar" currency="usd" background-color="#ffffff" font-color="#4c4c4c" locale="en"></coingecko-coin-converter-widget>
   </div>
 </div>
 
