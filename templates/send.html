@@ -3,31 +3,38 @@
 
 {% block content %}
 <h2>Current Balance: {{ user_balance }} XLM</h2>
-  <p>Enter the Stellar address you'd like to send money to:
+<p>Enter the Stellar address you'd like to send money to:</p>
   <form action="/send_confirm" method="POST">
     <p><input type="text" name="recipient_address" size="72" required pattern="[G][A-Z0-9]{55}"></p>
-
-  <p>Memo:</p>
-  <p style="font-size: 12px">If you are sending XLM to an exchange (Coinbase, Binance, etc.),
-    you will very likely need a memo!</h5>
-    <label for="memo"></label>
-    <p><input type="text" name="memo"></p>
-
-  <p>Amount (XLM):</p>
-    <label for="amount"></label>
-    <p><input type="number" name = "amount" min="0.001" max="{{ user_balance - 1.00001 }}" step="0.0000001" required pattern="[0-9]"></p>
-  <p style="font-size: 12px">XLM is only precise to seven digits after the decimal.</p>
-<p>Wallets require a minimum balance of 1 XLM, so you cannot send your entire balance.</p>
-  {% if user_balance > 1 %}
-    <div id ="next_button"><p><button type="submit"
-      onclick="disableSubmit">Next</button></p></div>
-    {% else %}
-    <div id ="next_button"><p><button disabled type="submit"
-      onclick="disableSubmit">Next</button></p></div>
-      <p>You do not have enough XLM in your wallet to send funds.</p>
-    {% endif %}
-
-    <p>Current network transaction fee: {{ fee }} stroops ({{ fee_xlm }} XLM)</p>
-  </form>
-
-{% endblock %}
+    
+    <p>Memo:</p>
+    <p style="font-size: 12px">If you are sending XLM to an exchange (Coinbase, Binance, etc.),
+      you will very likely need a memo!</h5>
+      <label for="memo"></label>
+      <p><input type="text" name="memo"></p>
+      
+      <p>Amount (XLM):</p>
+      <label for="amount"></label>
+      <p><input type="number" name = "amount" min="0.001" max="{{ user_balance - 1.00001 }}" step="0.0000001" required pattern="[0-9]"></p>
+      <p style="font-size: 12px">XLM is only precise to seven digits after the decimal.</p>
+      <p>Wallets require a minimum balance of 1 XLM, so you cannot send your entire balance.</p>
+      {% if user_balance > 1 %}
+      <div id ="next_button">
+        <div class="table">
+          <ul class="pills">
+            <li class="pill">
+              <button type="submit" class="btn-empty" onclick="disableSubmit">Next</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      {% else %}
+      <div id ="next_button"><p><button disabled type="submit" class="btn-empty"
+        onclick="disableSubmit">Next</button></p></div>
+        <p>You do not have enough XLM in your wallet to send funds.</p>
+        {% endif %}
+        
+        <p>Current network transaction fee: {{ fee }} stroops ({{ fee_xlm }} XLM)</p>
+      </form>
+      
+      {% endblock %}

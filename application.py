@@ -1,9 +1,10 @@
 from flask import Flask, render_template, redirect, request, session, flash
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network #connect to horizon and transact on stellar blockchain
-from stellar_sdk.exceptions import NotFoundError, BadRequestError, Ed25519SecretSeedInvalidError #failed transaction handling
+from stellar_sdk.exceptions import NotFoundError, BadRequestError, TypeError, Ed25519SecretSeedInvalidError #failed transaction handling
 from dotenv import load_dotenv #load in environment variables/tokens
-import requests #get data from stellar/coingecko servers
+import requests #get data from stellar/coingecko/exchange rate servers
 from datetime import datetime #convert unix timestamps to readable time formats
+import time #get current system time
 import os #access environment tokens
 import cg #coingecko api for lumen price
 import pandas as pd #storing dataframe of transaction list
@@ -13,6 +14,7 @@ import qrcode #generate qrcode for receiving address
 load_dotenv()
 application = Flask(__name__)
 application.secret_key = os.getenv("SECRET_KEY")
+er_key = os.getenv("EXCHANGE_RATE_KEY")
 
 #connect to stellar horizon server
 server = Server(horizon_url="https://horizon.stellar.org")
@@ -21,19 +23,37 @@ account_url = "https://horizon.stellar.org/accounts/"
 #getting transaction history
 tx_url = "https://horizon.stellar.org/transactions/"
 
+#get exchange rates
+er_url = "https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD"
+try:
+    rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
+    last_update_unix = rates['time_last_update_unix']
+    last_rate_update = datetime.strftime(datetime.fromtimestamp(last_update_unix), "%b %d %Y %H:%M")
+    currency_dict = rates['conversion_rates']
+    currency_list = list(rates['conversion_rates'].keys())
+except:
+    currency_list = []
+    last_rate_update = "N/A"
+
 #get transaction fee from server
 try:
     base_fee = server.fetch_base_fee()
 except:
     base_fee = 100
 
-@application.route("/")
+@application.route("/", methods=['GET', 'POST'])
 def home():
     """homepage"""
     #print(session.keys())
     #get latest XLM price from coingecko
     #also shows time of last update
     usd_price = cg.get_price()
+
+    #load user currency
+    try:
+        session['currency'] = request.form['currency']
+    except:
+        pass
 
     #clear session variables that may be leftover from filling out "send funds" page
     if 'recipient_address' in session:
@@ -43,6 +63,15 @@ def home():
     if 'memo' in session:
         session.pop('memo', None)
 
+    if 'currency' in session:
+        currency = session['currency']
+        conversion_rate = currency_dict[currency]
+    else:
+        session['currency'] = 'USD'
+        currency = session['currency']
+        conversion_rate = 1
+
+
     #check if wallet is currently connected
     if 'pub_key' in session:
         logged_in = True
@@ -50,10 +79,10 @@ def home():
     else:
         logged_in = False
         session['user_balance'] = 0
-    return render_template("main.html", 
+    return render_template("main.html",
         pub_address = session.get("pub_key"),
         user_balance = float(session['user_balance']),
-        usd_equiv = "$"+str(round(float(session['user_balance'])*usd_price, 2)),
+        fiat_equiv = str(round(float(session['user_balance'])*usd_price*conversion_rate, 2))+" "+currency,
         logged_in = logged_in)
 
 def get_bal(address):
@@ -216,16 +245,20 @@ def get_transactions(address):
 
 @application.route("/transactions")
 def transactions():
-    tx_df = get_transactions(session['pub_key'])
-    table = tx_df.to_html(index = False)
-    if tx_df.empty:
-        err_msg = "Error: transaction history could not be retrieved."
+    if 'pub_key' in session:
+        tx_df = get_transactions(session['pub_key'])
+        table = tx_df.to_html(index = False)
+        if tx_df.empty:
+            return render_template("transactions_list.html",
+            address = session['pub_key'],
+            err_msg = "Error: transaction history could not be retrieved.")
         return render_template("transactions_list.html",
         address = session['pub_key'],
-        err_msg = err_msg)
-    return render_template("transactions_list.html",
-    address = session['pub_key'],
-    table = table)
+        table = table)
+    else:
+        flash("Cannot retrieve transactions: there is no wallet connected.")
+        return redirect("/")
+
 
 @application.route("/send", methods = ['POST', 'GET'])
 def send_money():
@@ -259,25 +292,28 @@ def send_transaction():
     amount = session.get('amount')
     memo = session.get('memo')
     priv_key = session.get("priv_key")
-
-    transaction = (
-    TransactionBuilder(
-        source_account = source_account,
-        network_passphrase = Network.PUBLIC_NETWORK_PASSPHRASE,
-        base_fee = base_fee,
+    try:
+        transaction = (
+        TransactionBuilder(
+            source_account = source_account,
+            network_passphrase = Network.PUBLIC_NETWORK_PASSPHRASE,
+            base_fee = base_fee,
+            )
+        .add_memo(memo)
+        .append_payment_op(recipient_address, amount)
+        .set_timeout(30) #transaction valid for next 30 seconds
+        .build()
         )
-    .add_memo(memo)
-    .append_payment_op(recipient_address, amount)
-    .set_timeout(30) #transaction valid for next 30 seconds
-    .build()
-    )
-    transaction.sign(priv_key) #required to verify transaction
+        transaction.sign(priv_key) #required to verify transaction
+    except (BadRequestError, NotFoundError, TypeError) as e:
+        return e
+
     try:
         response = server.submit_transaction(transaction)
         transaction_info_url = "https://steexp.com/tx/"+response['hash']
         session['user_balance'] = get_bal(session.get('pub_key'))
         return transaction_info_url
-    except BadRequestError as e:
+    except (BadRequestError, NotFoundError, TypeError) as e:
         return e
 
 @application.route("/send_result", methods = ['POST', 'GET'])
@@ -285,7 +321,7 @@ def send_result():
     """page to output confirmation with recipient address and amount.
     displays link to view transaction info on stellar explorer"""
     result = send_transaction()
-    if result not in [BadRequestError, NotFoundError]:
+    if result not in [BadRequestError, NotFoundError, TypeError]:
         return render_template("send_success.html",
         address = session.get('recipient_address'),
         amount = session.get('amount'),
@@ -312,7 +348,7 @@ def remove_conf():
         session.pop("balance", None)
     return render_template("remove_conf.html")
 
-@application.route("/view_secret", methods=['GET'])
+@application.route("/view_secret")
 def view_secret():
     if "priv_key" in session:
         return render_template("view_secret.html",
@@ -320,6 +356,9 @@ def view_secret():
     else:
         flash("Cannot view secret key: there is no wallet connected.")
         return redirect("/")
+
+def set_currency_session():
+    session['currency'] = request.form['currency']
 
 @application.route("/about")
 def about():
@@ -331,12 +370,14 @@ def where_to_buy():
     """page for info on where to buy XLM"""
     return render_template("where_to_buy.html")
 
-@application.route("/more")
+@application.route("/more", methods=['GET', 'POST'])
 def more():
     """page for extra, less commonly accessed settings"""
-    return render_template("more.html")
+    return render_template("more.html",
+    currency_list = currency_list,
+    last_er_update = last_rate_update)
 
 # run the app
 if __name__ == "__main__":
-#    application.debug = True
+    application.debug = True
     application.run()

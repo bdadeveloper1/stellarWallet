@@ -3,6 +3,17 @@
 
 {% block content %}
 <p>{{ err_msg }}</p>
-<p><a href ="/import_wallet">Retry</a></p>
-<p><a href = "/">Home</a></p>
+<p><button class="btn-empty">
+    <ul class="pills">
+        <li class="pill">
+            <a href ="/import_wallet">Retry</a></li>
+    </ul>
+</button></p>
+<br>
+<p><button class="btn-empty">
+    <ul class="pills">
+        <li class="pill">
+            <a href ="/">Home</a></li>
+    </ul>
+</button></p>
 {% endblock %}

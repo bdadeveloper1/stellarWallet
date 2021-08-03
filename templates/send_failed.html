@@ -4,7 +4,12 @@
 {% block content %}
     <h3>Transaction unsuccessful.</h3>
     <p>{{ err_msg }}</p>
-        <p><a href = "/send">Send More</a></p>
+    <p><button type="submit" onclick="disableSubmit" class="btn-empty">
+        <ul class="pills">
+          <li class="pill"><a href="/send">Retry</a></li>
+        </ul>
+      </button></p>
+        <p><a href = "/send">Retry</a></p>
         <p><a href = "/check_balance">Check Address Balance</a></p>
         <p><a href = "/">Home</a><br></p>
     {% endblock %}

@@ -2,22 +2,30 @@
 {% block title %}Confirmation{% endblock %}
 
 {% block content %}
-    <h3>Confirm Transaction</h3>
-    <p>You are about to send {{amount}} XLM to the following address:</p>
-    <p>{{address}}</p>
-    <p>Be sure to double check the amount and address are correct.</p>
-    <p>Submitted transactions cannot be undone.</p>
-    <form method="POST" action = "send_result"> 
-    <div id ="submit_transaction_button"><p><button type="submit"
-        onclick="disableSubmit">Confirm Transaction</button></p></div>
-    </form>
+<h3>Confirm Transaction</h3>
+<p>You are about to send {{amount}} XLM to the following address:</p>
+<p>{{address}}</p>
+<p>Be sure to double check the amount and address are correct.</p>
+<p>Submitted transactions cannot be undone.</p>
+<div class="table">
+<form method="POST" action = "send_result">
+  <div id ="submit_transaction_button">
+    <p>
+      <ul class="pills">
+        <li class="pill">
+          <button type="submit" onclick="disableSubmit" class="btn-empty">Confirm Transaction</button>
+        </li>
+      </ul>
+    </button></p>
+  </div>
+</form>
 
-    <form action="/">
-      <div id ="submit_transaction_button">
-        <p><button type="submit">Cancel</button></p>
-      </div>
-      </form>
-
+<p><button type="submit" onclick="disableSubmit" class="btn-empty">
+  <ul class="pills">
+    <li class="pill"><a href="/">Cancel</a></li>
+  </ul>
+</button></p>
+</div>
         <script>
             function disableSubmit(){
               var x = document.getElementById("submit_transaction_button");

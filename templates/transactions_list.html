@@ -2,8 +2,13 @@
 {% block title %}Wallet Transactions{% endblock %}
 
 {% block content %}
-<p style="text-align: center; font-size: 18px;">Transaction History for Account<br>{{ address }}</p>
+<p style="text-align: center; font-size: 18px;">Transaction History for Address<br>{{ address }}</p>
 {{ err_msg }}
 {{ table | safe}}
-<p><a href="/"><button type="button">Home</button></a></p>
+
+<div class = "table">
+    <ul class="pills">
+        <li class="pill"><a href="/">Home</a></li>
+    </ul>
+</div>
 {% endblock %}

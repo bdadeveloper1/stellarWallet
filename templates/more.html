@@ -10,6 +10,30 @@
 </ul>
 </div>
 
+<br><br>
+
+<form name="currency_selection" id="currency_selection" method="POST" action="/">
+    <div class = "table">
+        Select Native Currency:
+        <select name="currency" id="currency">
+            {% for currency in currency_list %}
+            {% if currency=="USD" %}
+            <option value="{{ currency }}" selected>{{ currency }}</option>
+            {% else %}
+            <option value="{{ currency }}">{{ currency }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <br><br>
+        <div class = "table">
+            <ul class= "pills"><li class="pill">
+                <button type = "submit" class="btn-empty">Change Currency</button>
+            </li>
+        </ul>
+    </div>
+</div>
+</form>
+<p>Exchange rates last updated {{last_er_update}} UTC</p>
 <!--
     <p>
         <button>Toggle Night Mode (coming soon)</button>
