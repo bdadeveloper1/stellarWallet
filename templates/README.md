@@ -35,6 +35,3 @@ Brief info about the app/wallet.
 
 <h3>More</h3>
 Links to less commonly used pages/settings.
-
-<h3>Check address balance <span style="color:red;"> (deprecated)</span> </h3>
-Allows lookup of an address's balance. Seems unnecessary for a wallet when many tools decidated to blockchain exploration exist.
