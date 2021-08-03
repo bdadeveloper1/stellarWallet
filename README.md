@@ -6,9 +6,10 @@ Future Plans:
 - [x] Transaction history page
 - [x] QR code
 - [x] Import wallet with private key
-- [ ] Updated layout (in progress)
+- [x] Multiple currency options next to wallet balance
+- [x] Quickly look up prices for different currencies
+- [x] Updated layout
 - [ ] Disable send transaction button after sending to avoid multiple transactions
 - [ ] Add balance refresh option to homepage
 - [ ] More crypto assets
-- [ ] More fiat currency options for displaying XLM balance and market spot price
 - [ ] Better/more proper handling of session variables
