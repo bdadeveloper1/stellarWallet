@@ -41,7 +41,7 @@ body {
   background-color: var(--bg);
   height: 100%;
   display: flex;
-  font-family: "Roboto", sans-serif;
+  font-family: "Roboto", "-apple-system-body", sans-serif;
 }
 
 .container {

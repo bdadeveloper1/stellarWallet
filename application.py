@@ -259,7 +259,6 @@ def transactions():
         flash("Cannot retrieve transactions: there is no wallet connected.")
         return redirect("/")
 
-
 @application.route("/send", methods = ['POST', 'GET'])
 def send_money():
     """page for inputting data to send money"""
@@ -356,9 +355,6 @@ def view_secret():
     else:
         flash("Cannot view secret key: there is no wallet connected.")
         return redirect("/")
-
-def set_currency_session():
-    session['currency'] = request.form['currency']
 
 @application.route("/about")
 def about():
