@@ -11,53 +11,55 @@
     </strong>
     {% else %}
     <strong class="name">Welcome!<br>
-    There is no wallet connected.</strong>
-    {% endif %}
-  </div>
-  {% if logged_in %}
-  <div class="card_mid">
-    <p>Current Balance: {{user_balance}} XLM ({{fiat_equiv}})</p>
-    <ul class="pills">
-      <div class = "table">
-    <li class="pill" style="display:inline-block;" onClick="window.location.reload();">
-      <a href="/">Refresh Balance</a>
-    </li>
-  </div>
-  </ul>
-  <br><br>
-    Your public address:
+      There is no wallet connected.</strong>
+      {% endif %}
+    </div>
+    {% if logged_in %}
+    <div class="card_mid">
+      <p>Current Balance: {{user_balance}} XLM ({{fiat_equiv}})</p>
+      <ul class="pills">
+        <li class="pill">
+            <button type="submit" class="btn-empty" onClick="window.location.reload();">
+              Refresh Balance
+            </button>
+          </li>
+        </ul>
+        <br><br>
+      Your public address:
       <p class="address">{{pub_address}}</p>
     </div>
-  {% else %}
-  {% endif %}
-</div>
-
-<div class = "card">
-  <div class = "card_top">
-    <strong class="name"><p>Select what you'd like to do:</p></strong>
-    <div class = "card_mid">
-      <ul class="pills">
-        {% if logged_in %}
-      <li class="pill" style="display:inline-block;"><a href="/send">Send Funds</a></li>
-      <li class="pill" style="display:inline-block;"><a href="/qr_code">Display QR Code</a></li>
-      <li class="pill" style="display:inline-block;"><a href="/transactions">View Transaction History</a></li>
       {% else %}
-      <li class="pill"><a href="/create">Create A New Wallet</a></li></p>
-      <li class="pill"><a href="/import_wallet">Recover An Existing Wallet</a></li>
       {% endif %}
-    </ul>
     </div>
-  </div>
-</div>
+    
+    <div class = "card">
+      <div class = "card_top">
+        <br>
+        <strong class="name">Select what you'd like to do:</strong>
+        <br><br>
+        <div class = "card_mid">
+          <ul class="pills">
+            {% if logged_in %}
+            <li class="pill"><a href="/send">Send Funds</a></li>
+            <li class="pill"><a href="/qr_code">Display QR Code</a></li>
+            <li class="pill"><a href="/transactions">View Transaction History</a></li>
+            {% else %}
+            <li class="pill"><a href="/create">Create A New Wallet</a></li>
+            <li class="pill"><a href="/import_wallet">Recover An Existing Wallet</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card_top">
+        <strong class="name" style="text-align: left;">XLM Price Conversion</strong>
+      </div>
+      <div class="card_mid">
+        <script src="https://widgets.coingecko.com/coingecko-coin-converter-widget.js"></script>
+        <coingecko-coin-converter-widget  coin-id="stellar" currency="usd" background-color="#ffffff" font-color="#4c4c4c" locale="en"></coingecko-coin-converter-widget>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="card_top">
-    <strong class="name" style="text-align: left;">XLM Price Conversion</strong>
-  </div>
-  <div class="card_mid">
-    <script src="https://widgets.coingecko.com/coingecko-coin-converter-widget.js"></script>
-    <coingecko-coin-converter-widget  coin-id="stellar" currency="usd" background-color="#ffffff" font-color="#4c4c4c" locale="en"></coingecko-coin-converter-widget>
-  </div>
-</div>
-
-{% endblock %}
+    {% endblock %}

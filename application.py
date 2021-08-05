@@ -24,7 +24,6 @@ account_url = "https://horizon.stellar.org/accounts/"
 tx_url = "https://horizon.stellar.org/transactions/"
 
 #get exchange rates
-er_url = "https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD"
 try:
     rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
     last_update_unix = rates['time_last_update_unix']
@@ -45,15 +44,9 @@ except:
 def home():
     """homepage"""
     #print(session.keys())
-    #get latest XLM price from coingecko
-    #also shows time of last update
-    usd_price = cg.get_price()
 
-    #load user currency
-    try:
-        session['currency'] = request.form['currency']
-    except:
-        pass
+    #get latest XLM price from coingecko
+    usd_price = cg.get_price()
 
     #clear session variables that may be leftover from filling out "send funds" page
     if 'recipient_address' in session:
@@ -63,6 +56,12 @@ def home():
     if 'memo' in session:
         session.pop('memo', None)
 
+    #load user's selected currency
+    try:
+        session['currency'] = request.form['currency']
+    except:
+        pass
+    
     if 'currency' in session:
         currency = session['currency']
         conversion_rate = currency_dict[currency]
@@ -70,7 +69,6 @@ def home():
         session['currency'] = 'USD'
         currency = session['currency']
         conversion_rate = 1
-
 
     #check if wallet is currently connected
     if 'pub_key' in session:
@@ -82,7 +80,7 @@ def home():
     return render_template("main.html",
         pub_address = session.get("pub_key"),
         user_balance = float(session['user_balance']),
-        fiat_equiv = str(round(float(session['user_balance'])*usd_price*conversion_rate, 2))+" "+currency,
+        fiat_equiv = "approx. "+str(round(float(session['user_balance'])*usd_price*conversion_rate, 2))+" "+currency,
         logged_in = logged_in)
 
 def get_bal(address):
@@ -145,13 +143,6 @@ def import_phrase(phrase):
         #set session variables once wallet is successfully imported
         session['priv_key'] = imported_key.secret
         session['pub_key'] = imported_key.public_key
-        #try to retrieve the balance
-        #if we can't (account has no transactions), we just set it to 0
-        account_info = requests.get(account_url+session['pub_key']).json()
-        try:
-            session['user_balance'] = account_info['balances'][0]['balance']
-        except KeyError:
-            session['user_balance'] = 0
         return True
     else:
         return False
@@ -263,7 +254,7 @@ def transactions():
 def send_money():
     """page for inputting data to send money"""
     return render_template("send.html",
-    user_balance = float(get_bal(session.get('pub_key'))),
+    user_balance = float(session['user_balance']),
     fee = base_fee,
     fee_xlm = format(base_fee/10000000, ".7f"))
 
