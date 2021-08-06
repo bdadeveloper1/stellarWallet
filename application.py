@@ -26,12 +26,14 @@ tx_url = "https://horizon.stellar.org/transactions/"
 #get exchange rates
 try:
     rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
-    last_update_unix = rates['time_last_update_unix']
-    last_rate_update = datetime.strftime(datetime.fromtimestamp(last_update_unix), "%b %d %Y %H:%M")
+    last_rate_update_unix = rates['time_last_update_unix']
+    last_rate_update = datetime.strftime(datetime.fromtimestamp(last_rate_update_unix), "%b %d %Y %H:%M")
     currency_dict = rates['conversion_rates']
-    currency_list = list(rates['conversion_rates'].keys())
-except:
-    currency_list = []
+    currency_list = list(currency_dict.keys())
+except: #set default if exchange rates can't be retrieved
+    currency_list = ['USD']
+    currency_dict = {'USD': 1}
+    last_rate_update_unix = int(time.time())
     last_rate_update = "N/A"
 
 #get transaction fee from server
@@ -360,6 +362,19 @@ def where_to_buy():
 @application.route("/more", methods=['GET', 'POST'])
 def more():
     """page for extra, less commonly accessed settings"""
+    global last_rate_update_unix, rates, last_rate_update, currency_dict, currency_list
+    if int(time.time()) - int(last_rate_update_unix) > 3600: #only check once an hour
+        try:
+            rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
+            last_rate_update_unix = rates['time_last_update_unix']
+            last_rate_update = datetime.strftime(datetime.fromtimestamp(last_rate_update_unix), "%b %d %Y %H:%M")
+            currency_dict = rates['conversion_rates']
+            currency_list = list(currency_dict.keys())
+        except: #set defaults if exchange rates can't be retrieved
+            currency_list = ['USD']
+            currency_dict = {'USD': 1}
+            last_rate_update_unix = int(time.time())
+            last_rate_update = "N/A"
     return render_template("more.html",
     currency_list = currency_list,
     last_er_update = last_rate_update)
