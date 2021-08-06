@@ -37,9 +37,6 @@ input{
   background:none;
   padding:0;
 }
-.navigation > img {
-  padding-top: 100%; /* 1:1 Aspect Ratio */
-}
 body {
   background-color: var(--bg);
   height: 100%;
@@ -73,6 +70,7 @@ body {
 .navigation .logo {
   width: 100%;
   max-width: 48px;
+  max-height: 48px;
 }
 .navigation > button {
   cursor: pointer;
