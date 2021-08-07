@@ -438,9 +438,6 @@ h5 {
 p {
   text-align: center;
 }
-.address {
-  font-size: 80%;
-}
 a:hover, a:visited, a:link, a:active
 {
   text-decoration: none;
@@ -462,8 +459,6 @@ a:visited {
   .pills .pill {
     font-size: 1.2em;
   }
-
-
 }
 coingecko-coin-converter-widget {
   min-width: 200px;

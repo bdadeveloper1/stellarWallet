@@ -17,16 +17,16 @@
     {% if logged_in %}
     <div class="card_mid">
       <p>Current Balance: {{user_balance}} XLM ({{fiat_equiv}})</p>
+      <form action="/get_bal">
       <ul class="pills">
         <li class="pill">
-            <button type="submit" class="btn-empty">
-              <a href="/">Refresh Balance</a>
-            </button>
+            <button type="submit" class="btn-empty">Refresh Balance</button>
           </li>
         </ul>
+      </form>
         <br><br>
       Your public address:
-      <p class="address">{{pub_address}}</p>
+      <p>{{pub_address}}</p>
     </div>
       {% else %}
       {% endif %}
@@ -41,7 +41,7 @@
           <ul class="pills">
             {% if logged_in %}
             <li class="pill"><a href="/send">Send Funds</a></li>
-            <li class="pill"><a href="/qr_code">Display QR Code</a></li>
+            <li class="pill"><a href="/qr_code">Display QR Code</button></a></li>
             <li class="pill"><a href="/transactions">View Transaction History</a></li>
             {% else %}
             <li class="pill"><a href="/create">Create A New Wallet</a></li>
@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="card">
       <div class="card_top">
         <strong class="name" style="text-align: left;">XLM Price Conversion</strong>
@@ -61,5 +61,4 @@
         <coingecko-coin-converter-widget  coin-id="stellar" currency="usd" background-color="#ffffff" font-color="#4c4c4c" locale="en"></coingecko-coin-converter-widget>
       </div>
     </div>
-
     {% endblock %}

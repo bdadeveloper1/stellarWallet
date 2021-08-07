@@ -23,51 +23,42 @@ account_url = "https://horizon.stellar.org/accounts/"
 #getting transaction history
 tx_url = "https://horizon.stellar.org/transactions/"
 
-#get exchange rates
-try:
-    rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
-    last_rate_update_unix = rates['time_last_update_unix']
-    last_rate_update = datetime.strftime(datetime.fromtimestamp(last_rate_update_unix), "%b %d %Y %H:%M")
-    currency_dict = rates['conversion_rates']
-    currency_list = list(currency_dict.keys())
-except: #set default if exchange rates can't be retrieved
-    currency_list = ['USD']
-    currency_dict = {'USD': 1}
-    last_rate_update_unix = int(time.time())
-    last_rate_update = "N/A"
-
 #get transaction fee from server
-try:
-    base_fee = server.fetch_base_fee()
-except:
-    base_fee = 100
+def get_fee():
+    try:
+        base_fee = server.fetch_base_fee()
+    except:
+        base_fee = 100
+    return base_fee
+fee = get_fee()
+
+#get exchange rates
+def get_exchange_rates():
+    try:
+        rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
+        currency_dict = rates['conversion_rates']
+        currency_list = list(currency_dict.keys())
+        last_rate_update = datetime.strftime(datetime.fromtimestamp(rates['time_last_update_unix']), "%b %d %Y %H:%M")
+        next_update_unix = int(rates['time_next_update_unix'])
+    except: #set defaults if exchange rates can't be retrieved
+        currency_dict = {'USD': 1}
+        currency_list = ['USD']
+        last_rate_update = "N/A"
+        next_update_unix = int(time.time())+300 # in case API fails, wait 5 minutes before trying again
+    return currency_dict, currency_list, last_rate_update, next_update_unix
+currency_dict, currency_list, last_rate_update, next_update_unix = get_exchange_rates()
 
 @application.route("/", methods=['GET', 'POST'])
 def home():
     """homepage"""
-    #print(session.keys())
-
     #get latest XLM price from coingecko
     usd_price = cg.get_price()
-
-    #clear session variables that may be leftover from filling out "send funds" page
-    if 'recipient_address' in session:
-        session.pop('recipient_address', None)
-    if 'amount' in session:
-        session.pop('amount', None)
-    if 'memo' in session:
-        session.pop('memo', None)
-
-    #load user's selected currency
-    try:
-        session['currency'] = request.form['currency']
-    except:
-        pass
     
+    #load user's selected currency
     if 'currency' in session:
         currency = session['currency']
         conversion_rate = currency_dict[currency]
-    else:
+    else: #default to USD
         session['currency'] = 'USD'
         currency = session['currency']
         conversion_rate = 1
@@ -75,24 +66,25 @@ def home():
     #check if wallet is currently connected
     if 'pub_key' in session:
         logged_in = True
-        session['user_balance'] = get_bal(session.get('pub_key'))
     else:
         logged_in = False
         session['user_balance'] = 0
+
     return render_template("main.html",
         pub_address = session.get("pub_key"),
         user_balance = float(session['user_balance']),
         fiat_equiv = "approx. "+str(round(float(session['user_balance'])*usd_price*conversion_rate, 2))+" "+currency,
         logged_in = logged_in)
 
-def get_bal(address):
+@application.route("/get_bal")
+def get_bal():
     """function to retrieve wallet ballance"""
     try:
-        account_info = requests.get(account_url+address).json()
-        balance = account_info['balances'][0]['balance']
-        return balance
+        account_info = requests.get(account_url+session.get('pub_key')).json()
+        session['user_balance'] = account_info['balances'][0]['balance']
     except:
-        return 0
+        session['user_balance'] = 0
+    return redirect("/")
 
 @application.route("/create")
 def create():
@@ -102,14 +94,13 @@ def create():
 @application.route("/create_result")
 def create_result():
     """page for displaying seed phrase"""
-    
     phrase = Keypair.generate_mnemonic_phrase()
     return render_template("create_success.html",
     phrase = phrase)
 
 @application.route("/import_wallet", methods=['POST', 'GET'])
-def import_wallet():
-   """page for importing a new wallet using 12 word seed phrase"""
+def import_input():
+   """page for user to input secret phrase/key"""
    return render_template("import_wallet.html")
 
 @application.route("/import_result", methods=['POST', 'GET'])
@@ -145,6 +136,11 @@ def import_phrase(phrase):
         #set session variables once wallet is successfully imported
         session['priv_key'] = imported_key.secret
         session['pub_key'] = imported_key.public_key
+        account_info = requests.get(account_url+session['pub_key']).json()
+        try:
+            session['user_balance'] = account_info['balances'][0]['balance']
+        except KeyError:
+            session['user_balance'] = 0
         return True
     else:
         return False
@@ -178,7 +174,7 @@ def generate_qr_code():
     qr.add_data(session['pub_key'])
     qr.make(fit = True)
     img = qr.make_image(fill_color = "black",
-                        back_color = "white")
+                            back_color = "white")
     img.save("static/qr_code.png")
 
 def get_transactions(address):
@@ -253,12 +249,12 @@ def transactions():
         return redirect("/")
 
 @application.route("/send", methods = ['POST', 'GET'])
-def send_money():
+def send():
     """page for inputting data to send money"""
     return render_template("send.html",
     user_balance = float(session['user_balance']),
-    fee = base_fee,
-    fee_xlm = format(base_fee/10000000, ".7f"))
+    fee = get_fee(),
+    fee_xlm = format(fee/10000000, ".7f"))
 
 ################################ todo #########################################
 # disable send button after send button is clicked to avoid double spending
@@ -289,7 +285,7 @@ def send_transaction():
         TransactionBuilder(
             source_account = source_account,
             network_passphrase = Network.PUBLIC_NETWORK_PASSPHRASE,
-            base_fee = base_fee,
+            base_fee = fee,
             )
         .add_memo(memo)
         .append_payment_op(recipient_address, amount)
@@ -303,7 +299,6 @@ def send_transaction():
     try:
         response = server.submit_transaction(transaction)
         transaction_info_url = "https://steexp.com/tx/"+response['hash']
-        session['user_balance'] = get_bal(session.get('pub_key'))
         return transaction_info_url
     except (BadRequestError, NotFoundError, TypeError) as e:
         return e
@@ -321,6 +316,18 @@ def send_result():
     else:
         return render_template("send_failed.html",
         err_msg = result)
+
+@application.route("/send_clean")
+def send_clean():
+    """removes session variables that user input
+    on sending page, refreshes balance"""
+    if 'recipient_address' in session:
+        session.pop('recipient_address', None)
+    if 'amount' in session:
+        session.pop('amount', None)
+    if 'memo' in session:
+        session.pop('memo', None)
+    return redirect("/")
 
 @application.route("/remove_wallet")
 def remove_wallet():
@@ -359,25 +366,28 @@ def where_to_buy():
     """page for info on where to buy XLM"""
     return render_template("where_to_buy.html")
 
+@application.route("/purchase")
+def purchase():
+    """page to purchase XLM"""
+    return render_template("purchase.html")
+
 @application.route("/more", methods=['GET', 'POST'])
 def more():
     """page for extra, less commonly accessed settings"""
-    global last_rate_update_unix, rates, last_rate_update, currency_dict, currency_list
-    if int(time.time()) - int(last_rate_update_unix) > 3600: #only check once an hour
-        try:
-            rates = requests.get("https://v6.exchangerate-api.com/v6/"+er_key+"/latest/USD").json()
-            last_rate_update_unix = rates['time_last_update_unix']
-            last_rate_update = datetime.strftime(datetime.fromtimestamp(last_rate_update_unix), "%b %d %Y %H:%M")
-            currency_dict = rates['conversion_rates']
-            currency_list = list(currency_dict.keys())
-        except: #set defaults if exchange rates can't be retrieved
-            currency_list = ['USD']
-            currency_dict = {'USD': 1}
-            last_rate_update_unix = int(time.time())
-            last_rate_update = "N/A"
+    global currency_list, last_rate_update, next_update_unix
+    #if current time is greater than next scheduled update,
+    #retrieve new exchange rates
+    #this should limit API usage to once a day
+    if int(time.time()) > next_update_unix:
+        currency_dict, currency_list, last_rate_update, next_update_unix = get_exchange_rates()
     return render_template("more.html",
     currency_list = currency_list,
-    last_er_update = last_rate_update)
+    last_rate_update = last_rate_update)
+
+@application.route("/set_currency", methods=['POST', 'GET'])
+def set_currency():
+    session['currency'] = request.form['currency']
+    return redirect("/")
 
 # run the app
 if __name__ == "__main__":
