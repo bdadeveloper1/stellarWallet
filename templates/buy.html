@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Buy Stellar Lumens{% endblock %}
+
+{% block content %}
+<h2>Buy Lumens directly from here!</h2>
+<div class="card">
+    <iframe
+    id="onramper-widget"
+    title="Onramper widget"
+    frameborder="no"
+    allow="accelerometer; autoplay; camera; gyroscope; payment;"
+    src="https://widget.onramper.com?color=266678&onlyCryptos=XLM&defaultCrypto=XLM&defaultAmount=100&wallets=XLM:{{address}}&apiKey=pk_test_LaU4yBgSQ4sBQpOyhH87b7_CYBEk9TPR0RtYyL7uJ4g0">
+</iframe>
+</div>
+
+<h3>Exchanges to buy Stellar Lumens (XLM)</h3>
+<h4><a href = "https://stellarx.com/" target = "_blank">StellarX</a>
+    <br><br>
+    <a href = "https://coinbase.com/" target = "_blank">Coinbase</a>
+    <br><br>
+    <a href = "https://binance.us/" target = "_blank">Binance US</a>
+    <br><br>
+    <a href = "https://binance.com/" target = "_blank">Binance (non-US customers)</a>
+    <br><br>
+    <a href = "https://www.kraken.com/" target = "_blank">Kraken</a></h4>
+    {% endblock %}

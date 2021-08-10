@@ -4,7 +4,7 @@ A basic web wallet for interacting with and transacting on the Stellar blockchai
 
 Future Plans:
 - [ ] Disable send transaction button after sending to avoid multiple transactions
-- [ ] Add balance refresh option to homepage
+- [x] Add balance refresh option to homepage
 - [ ] More crypto assets
 - [ ] Better/more proper handling of session variables
 - [x] Transaction history page

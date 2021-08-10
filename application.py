@@ -361,15 +361,15 @@ def about():
     """page for info about stellar/the wallet"""
     return render_template("about.html")
 
-@application.route("/where_to_buy")
-def where_to_buy():
+@application.route("/buy")
+def buy():
     """page for info on where to buy XLM"""
-    return render_template("where_to_buy.html")
-
-@application.route("/purchase")
-def purchase():
-    """page to purchase XLM"""
-    return render_template("purchase.html")
+    if 'pub_key' in session:
+        address = session.get('pub_key')
+    else:
+        address = ""
+    return render_template("buy.html",
+    address = address)
 
 @application.route("/more", methods=['GET', 'POST'])
 def more():
