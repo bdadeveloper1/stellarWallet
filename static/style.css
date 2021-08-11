@@ -29,6 +29,7 @@ input{
   max-width: 80%;
   border: 8px;
   overflow: auto;
+  font-family: Roboto, sans-serif;
 }
 .btn-empty{
   font-family: "Roboto", sans-serif;
@@ -183,16 +184,17 @@ button {
   color: white;
   text-decoration: none;
 }
- /* Style the buttons that are used to open and close the accordion panel */
- .accordion {
-  background-color: #eee;
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+  background-color: #ddd;
   color: blue;
   cursor: pointer;
   padding: 18px;
   width: 100%;
   text-align: left;
-  border: none;
+  border: 1px;
   outline: none;
+  border-radius: 6px;
   transition: 0.4s;
   font-family: Roboto, sans-serif;
   font-weight: 500;
@@ -205,10 +207,13 @@ button {
 
 /* Style the accordion panel. Note: hidden by default */
 .panel {
-  padding: 0 18px;
-  background-color: white;
+  padding: 10px;
+  background-color: #eee;
   display: none;
   overflow: auto;
+  border-radius: 2px;
+  text-align: justify;
+  line-height: 1.5;
 }
 
 .card {
@@ -223,6 +228,18 @@ button {
   margin-right: auto;
   margin-left: auto;
   max-width: 800px;
+}
+.card_faq {
+  transition: var(--transition);
+  transition-delay: var(--transitionDelay2);
+  background-color: transparent;
+  border-radius: 5px;
+  overflow: hidden;
+  text-align: center;
+  min-width: 300px;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 900px;
 }
 .card + .card {
   margin-top: 25px;
