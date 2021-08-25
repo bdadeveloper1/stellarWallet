@@ -7,7 +7,6 @@
 /static/qr_code.png
 
 /.DS_Store
-/__pycache__
 __pycache__/
 .pytest_cache/
 
