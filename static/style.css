@@ -14,6 +14,33 @@
   --transitionDelay3: 450ms;
 }
 
+.topnav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.topnav li {
+  float: left;
+}
+
+.topnav li a {
+  display: block;
+  color: blue;
+  text-align: center;
+  padding: 28px 12px;
+  text-decoration: none;
+}
+.topnav li a:hover:not(.active) {
+  background-color: #ddd;
+}
+.topnav .active {
+  background-color: #04AA6D;
+}
+
+
 * {
   box-sizing: border-box;
 }
@@ -75,11 +102,40 @@ body {
 .navigation > a {
   display: flex;
 }
-.navigation .logo {
-  width: 100%;
+
+/* Add a background color to the top navigation */
+.topnav {
+  background-color: #fff;
+  overflow: hidden;
+}
+.topnav .logo {
+  height:100%;
   max-width: 48px;
   max-height: 48px;
 }
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+
 .navigation > button {
   cursor: pointer;
   position: relative;
